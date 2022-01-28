@@ -8,6 +8,7 @@ license = "GNU"
 [tool.poetry.dependencies]
 python = "^3.10"
 pygame = "*"
+pyinstaller = "*"
 
 [tool.poetry.dev-dependencies]
 
