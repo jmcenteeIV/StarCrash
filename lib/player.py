@@ -5,10 +5,11 @@ from lib import loader
 vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, height: float, width: float, friction, acceleration):
+
+    def __init__(self, height, width, acceleration, friction):
         super().__init__()
-        self.accuracy = acceleration
         self.friction = friction
+        self.acceleration = acceleration
         self.width = width
         self.height = height
         self.surf = pygame.Surface((30, 30))
@@ -20,8 +21,11 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    # def draw(self, surface):
+    #     surface.blit(self.image, self.rect)
+
+    def update(self):
+        self.move()
     
     def move(self):
         self.acc = vec(0,0)
@@ -29,24 +33,24 @@ class Player(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
         #  Horizontal movement        
         if pressed_keys[K_LEFT]:
-            self.acc.x = -self.accuracy
+            self.acc.x = -self.acceleration
         if pressed_keys[K_RIGHT]:
-            self.acc.x = self.accuracy
+            self.acc.x = self.acceleration
 
         self.acc.x += self.vel.x * self.friction
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        if self.pos.x > self.width:
-            self.pos.x = 0
-        if self.pos.x < 0:
-            self.pos.x = self.width
+        if self.pos.x > (self.width - (self.rect.width/2)):
+            self.pos.x, self.acc.x = (self.width - (self.rect.width/2)), 0
+        if self.pos.x < (self.rect.width/2):
+            self.pos.x, self.acc.x = (self.rect.width/2) , 0
 
         #  Vertical movement
         if pressed_keys[K_DOWN]:
-            self.acc.y = self.accuracy
+            self.acc.y = self.acceleration
         if pressed_keys[K_UP]:
-            self.acc.y = -self.accuracy
+            self.acc.y = -self.acceleration
 
         self.acc.y += self.vel.y * self.friction
         self.vel += self.acc
