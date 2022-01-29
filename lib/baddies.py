@@ -77,4 +77,10 @@ class bad_guy(Sprite):
         """
         self.move()
 
+    def switch_mode(self):
+        """
+        switching to mech mode
+        """
+        pass 
+
     
