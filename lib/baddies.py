@@ -1,7 +1,6 @@
-from pygame.sprite import Sprite
-from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
-
+import resources
 import pygame
+import lib
 
 
 vec = pygame.math.Vector2
@@ -32,16 +31,21 @@ class Baddies(pygame.sprite.Sprite):
         self.image = pygame.Surface((50, 50))
         self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
-
-        # self.rect = pygame.draw.rect((screen, 0, 0, 255), (20, 20, 160,160))
-
-        self.speed = speed
-        self.counter = 0
         self.pos = vec(start_position)
+
+        self.resources = resources.Resources.instance()
+        
+        
         
 
     def update(self):
+        """
+        Refreshing enemy on screen and catching events in real time
+        """
         self.move()
+        self.take_damage()
+
+
 
     def move(self):
         """
@@ -57,4 +61,18 @@ class Baddies(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
+    def take_damage(self, player_bullet, player):
+        """
+        
+        """
+        
+        player_bullet = self.resources.update_groups['player_bullet']
+        player = self.resources.update_groups['player']
+
+        """
+        1st arg: name of sprite I want to check
+        2nd arg: name of group I want to compare against
+        3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
+        """
+        hits = pygame.sprite.spritecollide(self, player_bullet, True)
     
