@@ -55,10 +55,8 @@ class bad_guy(Sprite):
     def move(self):
         """
         moving the enemy
-        """
-        self.acc = vec(0,0)
-    
-        pressed_keys = pygame.key.get_pressed()
+        """   
+        
 
         self.pos.x += self.speed
 
