@@ -1,6 +1,6 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
-from lib import loader
+
 
 vec = pygame.math.Vector2
 
