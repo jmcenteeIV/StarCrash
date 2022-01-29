@@ -23,6 +23,6 @@ class Bullet(pygame.sprite.Sprite):
     
     def move(self):
         self.pos -= self.vel
-        if self.pos.y > self.height:
+        if self.pos.y < 0 - self.rect.height:
             self.kill()
         self.rect.midbottom = self.pos

@@ -2,7 +2,7 @@ import sys, os
 import pygame
 from pygame.locals import *
 
-from lib import loader, player, bullet
+from lib import loader, player, bullet, baddies
 
 class Game(object):
 
@@ -76,6 +76,10 @@ class Game(object):
         self.player = player.Player(self.assets['images']['ejike'], self.height, self.width, .25, -.12 )
         self.update_groups["player"].add(self.player)
         self.draw_groups["render"].add(self.player)
+
+        self.enemy = baddies.Baddies(self.height, self.width, (self.width/2, 40), 2, 5)
+        self.update_groups["enemy"].add(self.enemy)
+        self.draw_groups["render"].add(self.enemy)
         
 
     # High-level game loop
