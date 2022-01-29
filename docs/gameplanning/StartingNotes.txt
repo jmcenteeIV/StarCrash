@@ -1,0 +1,29 @@
+Controls:
+ WASD	: movement
+ Space 	: fire
+ Shift  : transform 
+ Esc 	: quit/menu
+
+Player:
+ Moves:
+   Bound to edge of screen
+ Shoots:
+  1 bullet per press
+ Transforms (later)
+   e.g. multi-bullet
+
+Enemies:
+  One hit kill
+  Almost like player, shoots bullets
+  Allow for multiple enemies
+  Later enemies have new behaviour (eg advance, sway, etc)
+
+Collisions:
+  Friendly fire behaviour tdb (prob not)
+  Player bullets die on impact
+
+Display:
+ 720p
+
+Gameplay startup:
+  Short timer on startup 'fore enemies spawn
