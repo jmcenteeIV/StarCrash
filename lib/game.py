@@ -1,8 +1,8 @@
-import sys, os
+import sys
 import pygame
 from pygame.locals import *
 
-from lib import loader, player, bullet
+from lib import bullet, resources
 
 class Game(object):
 
@@ -32,50 +32,7 @@ class Game(object):
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
         
-        self.load_assets()
-
-
-    # Load and store assets in a centralized location. 
-    # For now this is also where we spawn our initial game objects.
-    def load_assets(self):
-
-        self.assets = {
-            'images': {},
-            'sounds': {},
-        }
-
-        for root, dirs, files in os.walk('assets'):
-            for file in files:                          # e.g. assets/images/paperboy.jpg                            
-                assetType = os.path.split(root)[1]      #      assets/images    ->  images
-                assetName = os.path.splitext(file)[0]   #      paperboy.jpg     ->  paperboy
-                assetPath = os.path.join(root, file)    #      assets/image, paperboy.jpg -> assets/images/paperboy.jpg
-                print(f"Loading {assetType} {file} as {assetName}")
-                asset = loader.load_asset(assetPath, assetType)
-                self.assets[assetType][assetName] = asset
-
-        # These groups are meant to be used only for drawing sprites
-        self.draw_groups = {
-            "background": pygame.sprite.Group(),
-            "render": pygame.sprite.Group(),
-            "ui": pygame.sprite.Group(),
-        }
-
-        # These groups are meant to be used only for updating state (logic, state, etc)
-        self.update_groups = {
-            "enemy": pygame.sprite.Group(),
-            "enemy_bullet": pygame.sprite.Group(),
-            "player_bullet":pygame.sprite.Group(),
-            "player": pygame.sprite.Group()
-        }
-
-        # The background is now another sprite. This code is a bit cumbersome, but this allows the bg to be altered
-        self.background_sprite = pygame.sprite.Sprite(self.draw_groups['background'])
-        self.background_sprite.image = self.assets['images']['notspaceart']
-        self.background_sprite.rect = pygame.Rect(0,0,1,1)
-
-        self.player = player.Player(self.assets['images']['ejike'], self.height, self.width, .25, -.12 )
-        self.update_groups["player"].add(self.player)
-        self.draw_groups["render"].add(self.player)
+        resources.Resources.instance().load_assets(self)
         
 
     # High-level game loop
@@ -88,8 +45,9 @@ class Game(object):
         
     # Update Sprite state
     def update_sprites(self):
-        for group in self.update_groups:
-            self.update_groups[group].update()
+        update_groups = resources.Resources.instance().update_groups
+        for group in update_groups:
+            update_groups[group].update()
 
     def process_events(self):
         for event in pygame.event.get():
@@ -106,13 +64,14 @@ class Game(object):
         # Rod: I thought I read something about dicts not gauranteeing a consistent access order.
         #      this could cause issues if e.g. the render group is drawn before the background.
         #      Perhaps that's for older Python tho and maybe we're fine?
-        for group in self.draw_groups:
-            self.draw_groups[group].draw(self.screen)
+        draw_groups = resources.Resources.instance().draw_groups
+        for group in draw_groups:
+            draw_groups[group].draw(self.screen)
         pygame.display.flip()
 
 
     def player_fire(self):
-        self.bullet = bullet.Bullet(self.height, 6, self.player.rect.midtop)
-        self.update_groups["player_bullet"].add(self.bullet)
-        self.draw_groups["render"].add(self.bullet)
-        self.assets['sounds']['laser1'].play()
+        new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
+        resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
+        resources.Resources.instance().draw_groups["render"].add(new_bullet)
+        resources.Resources.instance().assets['sounds']['laser1'].play()
