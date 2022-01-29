@@ -1,5 +1,7 @@
 import pygame
-from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
+from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP, K_SPACE
+
+from lib import resources, bullet
 
 vec = pygame.math.Vector2
 
@@ -20,15 +22,24 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
-    # def draw(self, surface):
-    #     surface.blit(self.image, self.rect)
+        self.read_to_fire = True
 
     def update(self):
         self.move()
+
+        pressed_keys = pygame.key.get_pressed()
+        if pressed_keys[K_SPACE]:
+            if self.ready_to_fire:
+                self.ready_to_fire = False
+                self.player_fire()
+
+        if not pressed_keys[K_SPACE]:
+            self.ready_to_fire = True
+
     
     def move(self):
         self.acc = vec(0,0)
-    
+
         pressed_keys = pygame.key.get_pressed()
         #  Horizontal movement        
         if pressed_keys[K_LEFT]:
@@ -61,3 +72,9 @@ class Player(pygame.sprite.Sprite):
             self.pos.y, self.acc.y = (0 + self.rect.height), 0
 
         self.rect.midbottom = self.pos
+
+    def player_fire(self):
+        new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
+        resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
+        resources.Resources.instance().draw_groups["render"].add(new_bullet)
+        resources.Resources.instance().assets['sounds']['laser1'].play()
