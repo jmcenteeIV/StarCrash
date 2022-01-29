@@ -24,13 +24,15 @@ class Game(object):
     def start_game(self):
         # Pygame, Pygame Module, and Screen setup
         pygame.init()
+        pygame.mixer.init()
         
         self.fps = 60
         self.fpsClock = pygame.time.Clock()
         
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.background_image = loader.load_image("assets/images/notspaceart.png")
+        self.background_image = loader.load_asset("assets/images/notspaceart.png")
+        self.laser_sound = loader.load_asset("assets/sounds/laser1.wav", 'sound')
 
         # Game state setup
 
@@ -65,6 +67,7 @@ class Game(object):
     def process_events(self):
         for event in pygame.event.get():
             if event.type == QUIT:
+                pygame.mixer.quit()
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
@@ -81,3 +84,4 @@ class Game(object):
         self.bullet = bullet.Bullet(self.height, 6, self.player.rect.midtop)
         self.sprite_groups["update"]["player_bullet"].add(self.bullet)
         self.sprite_groups["render"].add(self.bullet)
+        self.laser_sound.play()
