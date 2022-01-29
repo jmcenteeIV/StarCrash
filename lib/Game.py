@@ -30,7 +30,7 @@ class Game():
         
         self.width, self.height = 640, 480
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.background_image = loader.load_image("assets\images\paperboy.jpg")
+        self.background_image = loader.load_image("assets/images/paperboy.jpg")
 
         # Game state setup
 
