@@ -2,7 +2,7 @@ import os
 import pygame
 from lib import loader
 
-from lib import player, bullet
+from lib import player, bullet, baddies
 
 class Resources():
     
@@ -59,6 +59,10 @@ class Resources():
         self.background_sprite = pygame.sprite.Sprite(self.draw_groups['background'])
         self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
+
+        self.enemy = baddies.Baddies(self.game.height, self.game.width, (self.game.width/2, 60), 2, 5)
+        self.update_groups["enemy"].add(self.enemy)
+        self.draw_groups["render"].add(self.enemy)
 
         self.player = player.Player(self.assets['images']['ejike'], self.game.height, self.game.width, .25, -.12 )
         self.update_groups["player"].add(self.player)
