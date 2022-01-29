@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import pygame
 from pygame.locals import *
 
@@ -35,10 +35,23 @@ class Game(object):
         self.load_assets()
 
 
-    # Load and store assets in a centralized location. For now this is where we spawn our initial game objects too.
+    # Load and store assets in a centralized location. 
+    # For now this is also where we spawn our initial game objects.
     def load_assets(self):
-        self.background_image = loader.load_asset("assets/images/notspaceart.png")
-        self.laser_sound = loader.load_asset("assets/sounds/laser1.wav", 'sound')
+
+        self.assets = {
+            'images': {},
+            'sounds': {},
+        }
+
+        for root, dirs, files in os.walk('assets'):
+            for file in files:                          # e.g. assets/images/paperboy.jpg                            
+                assetType = os.path.split(root)[1]      #      assets/images    ->  images
+                assetName = os.path.splitext(file)[0]   #      paperboy.jpg     ->  paperboy
+                assetPath = os.path.join(root, file)    #      assets/image, paperboy.jpg -> assets/images/paperboy.jpg
+                print(f"Loading {assetType} {file} as {assetName}")
+                asset = loader.load_asset(assetPath, assetType)
+                self.assets[assetType][assetName] = asset
 
         # These groups are meant to be used only for drawing sprites
         self.draw_groups = {
@@ -57,10 +70,10 @@ class Game(object):
 
         # The background is now another sprite. This code is a bit cumbersome, but this allows the bg to be altered
         self.background_sprite = pygame.sprite.Sprite(self.draw_groups['background'])
-        self.background_sprite.image = self.background_image
+        self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
 
-        self.player = player.Player(self.height, self.width, .25, -.12 )
+        self.player = player.Player(self.assets['images']['ejike'], self.height, self.width, .25, -.12 )
         self.update_groups["player"].add(self.player)
         self.draw_groups["render"].add(self.player)
         
@@ -102,4 +115,4 @@ class Game(object):
         self.bullet = bullet.Bullet(self.height, 6, self.player.rect.midtop)
         self.update_groups["player_bullet"].add(self.bullet)
         self.draw_groups["render"].add(self.bullet)
-        self.laser_sound.play()
+        self.assets['sounds']['laser1'].play()
