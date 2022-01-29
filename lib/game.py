@@ -56,9 +56,6 @@ class Game(object):
                 pygame.mixer.quit()
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.player_fire()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -69,10 +66,3 @@ class Game(object):
         for group in draw_groups:
             draw_groups[group].draw(self.screen)
         pygame.display.flip()
-
-
-    def player_fire(self):
-        new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
-        resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
-        resources.Resources.instance().draw_groups["render"].add(new_bullet)
-        resources.Resources.instance().assets['sounds']['laser1'].play()
