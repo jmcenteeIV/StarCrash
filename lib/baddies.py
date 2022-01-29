@@ -1,4 +1,4 @@
-import resources
+from lib import resources
 import pygame
 import lib
 
@@ -22,8 +22,7 @@ class Baddies(pygame.sprite.Sprite):
         # self.image.convert_alpha()
         # self.rect = self.enemy.image.get_rect()
 
-        # creating basic rect for beginning, change to image later
-        # gonna need to import the screen variable for the rect
+        self.health = 10
 
         self.width = width
         self.height = height
@@ -32,6 +31,7 @@ class Baddies(pygame.sprite.Sprite):
         self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
         self.pos = vec(start_position)
+        self.speed = speed
 
         self.resources = resources.Resources.instance()
         
@@ -43,7 +43,7 @@ class Baddies(pygame.sprite.Sprite):
         Refreshing enemy on screen and catching events in real time
         """
         self.move()
-        self.take_damage()
+        self.take_damage()        
 
 
 
@@ -61,13 +61,16 @@ class Baddies(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
-    def take_damage(self, player_bullet, player):
+        
+
+    def take_damage(self):
         """
         
         """
         
         player_bullet = self.resources.update_groups['player_bullet']
         player = self.resources.update_groups['player']
+        
 
         """
         1st arg: name of sprite I want to check
@@ -75,4 +78,4 @@ class Baddies(pygame.sprite.Sprite):
         3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
         """
         hits = pygame.sprite.spritecollide(self, player_bullet, True)
-    
+        
