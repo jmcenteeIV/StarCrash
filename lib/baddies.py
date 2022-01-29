@@ -1,7 +1,5 @@
-from re import X
 from pygame.sprite import Sprite
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
-import Game
 import loader
 import pygame
 
@@ -13,8 +11,8 @@ class bad_guy(Sprite):
     Currently repersents a single enemy, but can be used to spawn multiple enemies when used as an object
     """
 
-    # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
     def __init__(self, height, width, acceleration, friction):
+        super().__init__()
         """
         Initialize the alien and set its starting position
         """
