@@ -1,7 +1,7 @@
-from lib.Game import *
+from lib import game
 
-game = Game.instance()
-game.start_game()
+game_object = game.Game.instance()
+game_object.start_game()
 
 while(True):
-  game.loop()
+  game_object.loop()
