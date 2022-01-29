@@ -60,6 +60,15 @@ class Resources():
         self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
 
+        # Sprite for UI
+        self.ui_sprite = pygame.sprite.Sprite(self.draw_groups['ui'])
+        self.ui_sprite.image = pygame.Surface((256,64))
+        self.ui_sprite.rect = pygame.Rect(64,64,1,1)
+        self.ui_sprite.image.set_colorkey(pygame.Color(0,255,0))
+        self.ui_sprite.image.fill(pygame.Color(0,255,0))
+        
+        
+
         self.enemy = baddies.Baddies(self.game.height, self.game.width, (self.game.width/2, 60), 2, 5)
         self.update_groups["enemy"].add(self.enemy)
         self.draw_groups["render"].add(self.enemy)
