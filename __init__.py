@@ -15,7 +15,7 @@ fpsClock = pygame.time.Clock()
  
 width, height = 640, 480
 screen = pygame.display.set_mode((width, height))
-background_image = loader.load_image("assets\images\paperboy.jpg")
+background_image = loader.load_image("assets/images/paperboy.jpg")
  
 # Game loop.
 while True:
