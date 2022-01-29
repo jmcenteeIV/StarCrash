@@ -23,6 +23,7 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0,0)
 
         self.read_to_fire = True
+        self.kills = 0
 
     def update(self):
         self.move()
@@ -75,6 +76,10 @@ class Player(pygame.sprite.Sprite):
 
     def player_fire(self):
         new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
+        new_bullet.parent = self
         resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
         resources.Resources.instance().draw_groups["render"].add(new_bullet)
         resources.Resources.instance().assets['sounds']['laser1'].play()
+    
+    def increment_kills(self):
+        self.kills = self.kills + 1
