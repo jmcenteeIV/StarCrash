@@ -1,12 +1,11 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
-from lib import loader
 
 vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, height, width, acceleration, friction):
+    def __init__(self, image, height, width, acceleration, friction):
         super().__init__()
         self.friction = friction
         self.acceleration = acceleration
@@ -14,8 +13,8 @@ class Player(pygame.sprite.Sprite):
         self.height = height
         self.surf = pygame.Surface((30, 30))
         self.surf.fill((128,255,40))
-        self.image = loader.load_image('assets/images/ejike.png')
-        self.rect = self.image.get_rect(center = (100, 420))
+        self.image = image
+        self.rect = self.image.get_rect( center = (100, 420))
 
         self.pos = vec((width/2, height))
         self.vel = vec(0,0)

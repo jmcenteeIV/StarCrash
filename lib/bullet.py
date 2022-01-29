@@ -1,6 +1,6 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
-from lib import loader
+
 
 vec = pygame.math.Vector2
 
@@ -23,6 +23,6 @@ class Bullet(pygame.sprite.Sprite):
     
     def move(self):
         self.pos -= self.vel
-        if self.pos.y > self.height:
+        if self.pos.y < 0 - self.rect.height:
             self.kill()
         self.rect.midbottom = self.pos

@@ -1,1 +1,1 @@
-from . import utility, loader, player, game
+from . import utility, loader, game, resources, player, baddies 
