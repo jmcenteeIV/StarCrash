@@ -60,41 +60,14 @@ class bad_guy(Sprite):
     
         pressed_keys = pygame.key.get_pressed()
 
-        #  Horizontal movement for key presses 
-        # x: hortizontal axis movement         
-        if pressed_keys[K_LEFT]:
-            self.acc.x = -self.acceleration
-        if pressed_keys[K_RIGHT]:
-            self.acc.x = self.acceleration
+        self.pos.x += self.speed
 
-        # applying friction to horizontal enemy movement 
-        self.acc.x += self.vel.x * self.friction
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-
-        # collosion for horizontal movement
         if self.pos.x > (self.width - (self.rect.width/2)):
-            self.pos.x, self.acc.x = (self.width - (self.rect.width/2)), 0
+            self.pos.x, self.speed = (self.width - (self.rect.width/2)), self.speed * -1
         if self.pos.x < (self.rect.width/2):
-            self.pos.x, self.acc.x = (self.rect.width/2) , 0
+            self.pos.x, self.speed = (self.rect.width/2) , self.speed * -1
 
-        #  Vertical movement for key presses
-        # y: vertical axis movement 
-        if pressed_keys[K_DOWN]:
-            self.acc.y = self.acceleration
-        if pressed_keys[K_UP]:
-            self.acc.y = -self.acceleration
-
-        # applying vertical fricition to enemey movement 
-        self.acc.y += self.vel.y * self.friction
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
-
-        # collosion for vertical movement
-        if self.pos.y > self.height:
-            self.pos.y, self.acc.y = self.height, 0
-        if self.pos.y < self.rect.height:
-            self.pos.y, self.acc.y = (0 + self.rect.height), 0
+        self.rect.midbottom = self.pos
 
         # starting position for enemy spawn before movement 
         # starting at top left of screen
@@ -106,11 +79,4 @@ class bad_guy(Sprite):
         """
         self.move()
 
-    def close_to_edge(self):
-        """
-        checking if enemy is at edge of screen
-        """
-        screen_rect = self.surf.get_rect()
-
-        if self.rect.right >= screen_rect.right or self.rect.left <= 0:
-            return True
+    
