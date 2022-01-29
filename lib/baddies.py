@@ -1,4 +1,5 @@
 from pygame.sprite import Sprite
+import loader
 import pygame
 
 
@@ -15,7 +16,8 @@ class bad_guy(Sprite):
         """
         
         # load enemy image when we have it
-        # self.image = pygame.image.load('path/to/image')
+        # self.image = loader.load_image('/path/to/file')
+        # self.image.convert_alpha()
         # self.rect = self.enemy.image.get_rect()
 
         # creating basic rect for beginning, change to image later
