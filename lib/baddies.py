@@ -69,10 +69,12 @@ class bad_guy(Sprite):
         if pressed_keys[K_RIGHT]:
             self.acc.x = self.acceleration
 
+        # applying friction to horizontal enemy movement 
         self.acc.x += self.vel.x * self.friction
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
+        # collosion for horizontal movement
         if self.pos.x > (self.width - (self.rect.width/2)):
             self.pos.x, self.acc.x = (self.width - (self.rect.width/2)), 0
         if self.pos.x < (self.rect.width/2):
@@ -85,11 +87,12 @@ class bad_guy(Sprite):
         if pressed_keys[K_UP]:
             self.acc.y = -self.acceleration
 
-        # applying fricition to enemey movement 
+        # applying vertical fricition to enemey movement 
         self.acc.y += self.vel.y * self.friction
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
+        # collosion for vertical movement
         if self.pos.y > self.height:
             self.pos.y, self.acc.y = self.height, 0
         if self.pos.y < self.rect.height:
