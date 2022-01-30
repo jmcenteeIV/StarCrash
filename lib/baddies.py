@@ -6,6 +6,7 @@ import pygame
 
 
 
+
 vec = pygame.math.Vector2
 
 class Baddies(pygame.sprite.Sprite):
@@ -27,18 +28,18 @@ class Baddies(pygame.sprite.Sprite):
         self.image = image
         self.image.convert_alpha()
         self.rect = self.image.get_rect( center = (75,75))
-        # self.pos = vec(start_position)
-        # self.speed = speed
         self.res = resources.Resources.instance()
 
-        # sound?
-        # I explosions3.wav should be used for the super mech (fists?) because its the biggest sound
-        #self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
+
+        # explosion animation?
+        self.anime_count = 0
+        self.anime_frames = 3
+        self.anime = False
 
         # for bullet type
         self.bullet_number = randy.randint(0, 4)
 
-        # improvement stuff 
+        
         """
         adding movement options for random movements
         """
@@ -61,11 +62,6 @@ class Baddies(pygame.sprite.Sprite):
         #self.rotation = randy.uniform(0.3, 1)
         #self.angle = 0
 
-        """
-        Stuff to see if I can bounce the enemy off the screen edges 
-        """
-        self.screen = pygame.display.get_surface()
-        self.area = self.screen.get_rect()
         
 
     def update(self):
@@ -120,7 +116,6 @@ class Baddies(pygame.sprite.Sprite):
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
         if bullet_hit:
             bullet_hit[0].parent.increment_power_count()
-            # pygame.mixer.Sound.play(self.he_ded)
             self.explode()
 
         return bullet_hit
