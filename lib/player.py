@@ -29,9 +29,6 @@ class Player(pygame.sprite.Sprite):
         self.image = random.choice(self.images)
         self.rect = self.image.get_rect()
 
-        self.ui_power_count = uitext.UIText()  
-        self.ui_power_count.get_data_callback = self.get_power_count
-
         self.ui_bar = uiverticalbar.UIVerticalBar()
         self.ui_bar.get_data_callback = self.get_power_count
 
@@ -174,11 +171,6 @@ class Player(pygame.sprite.Sprite):
                 self.player_fire()
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
-        # To test player mode state change. Remove after testing
-        if pressed_keys[K_t]:
-            self.power_count = 25
-        if pressed_keys[K_g]:
-            self.power_count = 2
             
     
     def move(self):
@@ -254,7 +246,6 @@ class Player(pygame.sprite.Sprite):
         if self.hands:
             self.left_hand.kill()
             self.right_hand.kill()
-        self.ui_power_count.destroy()
         self.ui_bar.destroy()
         self.kill()
         del(self)
@@ -310,7 +301,6 @@ class Player(pygame.sprite.Sprite):
             self.game_over = True
             self.ui_bar.destroy()
             self.ui_lives_count.destroy()
-            self.ui_power_count.destroy()
         else:
             self.num_lives -= 1
             self.image = random.choice(self.images)
