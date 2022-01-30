@@ -1,5 +1,5 @@
 import sys
-import pygame
+import pygame, pygame.freetype
 from pygame.locals import *
 
 from lib import bullet, resources
@@ -24,6 +24,7 @@ class Game(object):
     def start_game(self):
         
         pygame.init()
+        # Per docs, we should be checking that these modules exist before attempting to init them
         pygame.mixer.init()
         
         self.fps = 60
@@ -31,10 +32,9 @@ class Game(object):
         
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
-        
+
         resources.Resources.instance().load_assets()
         resources.Resources.instance().load_objects(self)
-        
 
     # High-level game loop
     def loop(self):
