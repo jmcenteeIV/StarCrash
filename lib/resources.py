@@ -95,4 +95,3 @@ class Resources():
         self.draw_groups["render"].add(self.player)
 
         self.player_bullet_pool = []
-        
