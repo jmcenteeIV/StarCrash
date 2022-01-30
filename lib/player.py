@@ -3,7 +3,7 @@ from pygame.constants import *
 
 from lib.explosion import *
 from lib.transformflash import *
-from lib import resources, bullet, uitext, uiverticalbar
+from lib import resources, bullet, uitext, uiverticalbar, hands
 
 vec = pygame.math.Vector2
 
@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.ship_image = ship_image
         self.powered_mech_image = powered_mech_image
         self.mech_image = mech_image
-        self.rect = self.image.get_rect( center = (100, 420))
+        self.rect = self.image.get_rect( center = (106, 100))
 
         #References
         self.res = resources.Resources.instance()
@@ -45,7 +45,8 @@ class Player(pygame.sprite.Sprite):
         #Kludgey timer. Pls implement a better timer soon!
         self.drain_tick_count = 30
         self.drain_tick_rate = 30
-
+        
+        self.hands = False
         
     def update(self):
 
@@ -68,6 +69,16 @@ class Player(pygame.sprite.Sprite):
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
                 #TransformFlash((self.rect.x, self.rect.y))
+                if not self.hands:
+                    for left_side in [True, False]:
+                        if left_side:
+                            self.left_hand = hands.Hands( .95, self.rect.topleft, left_side, self.res.assets["images"]["power_L_hand"])
+                        else:
+                            self.right_hand = hands.Hands( .95, self.rect.topright, left_side, self.res.assets["images"]["power_R_hand"])
+                    for hand in [self.left_hand, self.right_hand]:
+                        self.res.update_groups["player"].add(hand)
+                        self.res.draw_groups["render"].add(hand)
+                    self.hands = True
 
         if self.mode_state == 1:
             self.take_damage(True)
@@ -76,16 +87,23 @@ class Player(pygame.sprite.Sprite):
             if self.power_count < 11:
                 self.next_mode_state = 2
                 self.image = self.mech_image
+                self.right_hand.image = self.res.assets["images"]["R_hand"]
+                self.left_hand.image = self.res.assets["images"]["L_hand"]
                 
         if self.mode_state == 2:
             self.take_damage(False)
-            if self.power_count < 3:
+            if self.power_count < 5:
                 self.next_mode_state = 0
                 self.image = self.ship_image
+                self.left_hand.kill()
+                self.right_hand.kill()
+                self.hands = False
 
             if self.power_count > 20:
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
+                self.right_hand.image = self.res.assets["images"]["power_R_hand"]
+                self.left_hand.image = self.res.assets["images"]["power_L_hand"]
 
         if not self.mode_state == self.next_mode_state:
             print(f"Mode: {self.mode_state} -> {self.next_mode_state}")
@@ -144,6 +162,10 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
+        if self.hands:
+            self.left_hand.move(self.rect.topleft)
+            self.right_hand.move(self.rect.topright)
+
     def player_fire(self):
         new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
         new_bullet.parent = self
@@ -162,6 +184,9 @@ class Player(pygame.sprite.Sprite):
         self.destroy()
 
     def destroy(self):
+        if self.hands:
+            self.left_hand.kill()
+            self.right_hand.kill()
         self.ui_text.destroy()
         self.ui_bar.destroy()
         self.kill()
