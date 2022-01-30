@@ -107,10 +107,11 @@ class Baddies(pygame.sprite.Sprite):
         return (bullet_hit, player_hit)
 
 
-    def check_right_edge(self):
+    def switch_mode(self):
         """
-        checking proximity to right edge of screen 
+        Switching to mech 
         """
+        pass
 
         
         
