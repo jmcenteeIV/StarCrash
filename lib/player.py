@@ -1,5 +1,6 @@
 import pygame
 from pygame.constants import *
+from time import sleep
 
 from lib import resources, bullet, uitext, uiverticalbar, hands
 
@@ -43,7 +44,16 @@ class Player(pygame.sprite.Sprite):
         #Kludgey timer. Pls implement a better timer soon!
         self.drain_tick_count = 30
         self.drain_tick_rate = 30
-        
+
+        # Sound power up properties
+        self.sound1 = pygame.mixer.Sound("/home/jammer/git/upsidedown-postman/assets/sounds/explosions4.wav")
+        self.sound2 = pygame.mixer.Sound("/home/jammer/git/upsidedown-postman/assets/sounds/powerup.wav")
+
+        # setting sound volume to max (range 0.0 - 1.0) becasue other sounds drowned out the transformation
+        # TODO (matthew.moroge) may have to adjust other sound volumes if this is doesn't work, need feedback from the team first
+        self.sound1.set_volume(1.0)
+        self.sound2.set_volume(1.0)
+
         self.hands = False
         
     def update(self):
@@ -66,6 +76,10 @@ class Player(pygame.sprite.Sprite):
             if self.power_count > 20:
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
+                # super duct tape for playing two sounds together in pygame
+                self.sound1.play()
+                sleep(0.5)
+                self.sound2.play()
                 if not self.hands:
                     for left_side in [True, False]:
                         if left_side:
