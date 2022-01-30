@@ -28,6 +28,8 @@ class Hands(pygame.sprite.Sprite):
 
         self.vel = vec(0,0)
         self.acc = vec(0,0)
+        
+        
 
     def update(self):
         self.move()
