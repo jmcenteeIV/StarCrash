@@ -111,12 +111,5 @@ class Baddies(pygame.sprite.Sprite):
 
         return (bullet_hit, player_hit)
 
-
-    def switch_mode(self):
-        """
-        Switching to mech 
-        """
-        pass
-
         
         
