@@ -112,3 +112,9 @@ class Resources():
                 self.update_groups["enemy"].add(enemy)
                 self.draw_groups["render"].add(enemy)
                 self.position_variance += 75
+
+    def sound_picker(self):
+        """
+        dict of sounds to load 
+        """
+        pass
