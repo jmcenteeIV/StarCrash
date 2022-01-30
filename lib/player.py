@@ -53,6 +53,9 @@ class Player(pygame.sprite.Sprite):
         self.hands = False
 
         self.update_hand_positions()
+
+        self.res.music_hype = False
+        self.res.song_change()
         
         
         
@@ -78,6 +81,8 @@ class Player(pygame.sprite.Sprite):
             if self.power_count > 20:
                 self.next_mode_state = 1
                 TransformFlash(self.pos)
+                self.res.music_hype = True
+                self.res.song_change()
                 self.image = self.powered_mech_image
                 self.rect = self.image.get_rect()
                 if not self.hands:
@@ -90,6 +95,7 @@ class Player(pygame.sprite.Sprite):
                         self.res.update_groups["player"].add(hand)
                         self.res.draw_groups["render"].add(hand)
                     self.hands = True
+
 
         if self.mode_state == 1:
             self.take_damage(True)
@@ -110,6 +116,8 @@ class Player(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.left_hand.kill()
                 self.right_hand.kill()
+                self.res.music_hype = False
+                self.res.song_change()
                 self.hands = False
 
             if self.power_count > 20:
