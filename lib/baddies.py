@@ -1,4 +1,7 @@
+from xml.sax.handler import DTDHandler
 from lib import resources
+import pygame.math as math
+import random as randy
 import pygame
 import lib
 
@@ -10,7 +13,7 @@ class Baddies(pygame.sprite.Sprite):
     Currently repersents a single enemy
     """
 
-    # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
+    
     def __init__(self, width, height, start_position, speed, aggression):
         super().__init__()
         """
@@ -30,10 +33,32 @@ class Baddies(pygame.sprite.Sprite):
         self.image = pygame.Surface((50, 50))
         self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
-        self.pos = vec(start_position)
-        self.speed = speed
+        # self.pos = vec(start_position)
+        # self.speed = speed
 
         self.resources = resources.Resources.instance()
+
+        """
+        adding movement options for random movements
+        """
+
+        # storing a copy of the image to try out rotation 
+        self.rotate_img = self.image.copy()
+        # random vector for enemy 
+        self.direction = pygame.Vector2(0, 0)
+        while self.direction.length() == 0:
+            self.direction = pygame.Vector2(randy.uniform(1, 4), randy.uniform(1, 4))
+
+        # constant random speed for enemy
+        self.direction.normalize_ip()
+        self.speed = randy.uniform(1, 5)
+
+        # storing the position in a vector, because math is hard
+        self.pos = pygame.Vector2(self.rect.center)
+
+        # let's play around with some rotation to make it look cool 
+        self.rotation = randy.uniform(0.3, 1)
+        self.angle = 0
         
         
         
@@ -52,14 +77,13 @@ class Baddies(pygame.sprite.Sprite):
         moving the enemy
         """
 
-        self.pos.x += self.speed
+        self.pos += self.direction * self.speed 
+        self.angle += self.rotation 
+        self.image = pygame.transform.rotate(self.rotate_img, self.angle)
 
-        if self.pos.x > (self.width - (self.rect.width/2)):
-            self.pos.x, self.speed = (self.width - (self.rect.width/2)), self.speed * -1
-        if self.pos.x < (self.rect.width/2):
-            self.pos.x, self.speed = (self.rect.width/2) , self.speed * -1
-
-        self.rect.midbottom = self.pos
+        self.rect = self.image.get_rect(center=self.pos)
+        
+        
 
         
 
@@ -78,4 +102,6 @@ class Baddies(pygame.sprite.Sprite):
         3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
         """
         hits = pygame.sprite.spritecollide(self, player_bullet, True)
+
+        
         
