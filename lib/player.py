@@ -1,7 +1,7 @@
 import pygame
 from pygame.constants import *
 
-from lib import resources, bullet, uitext
+from lib import resources, bullet, uitext, uiverticalbar
 
 vec = pygame.math.Vector2
 
@@ -22,6 +22,9 @@ class Player(pygame.sprite.Sprite):
         self.game = self.res.game
         self.ui_text = uitext.UIText()  
         self.ui_text.get_data_callback = self.get_power_count
+        self.ui_bar = uiverticalbar.UIVerticalBar()
+        self.ui_bar.get_data_callback = self.get_power_count
+
 
         #Motion Properties
         self.friction = friction
@@ -91,6 +94,7 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = -1
+            self.destroy()
     
     def move(self):
         self.acc = vec(0,0)
@@ -141,3 +145,9 @@ class Player(pygame.sprite.Sprite):
 
     def get_power_count(self):
         return self.power_count
+
+    def destroy(self):
+        self.ui_text.destroy()
+        self.ui_bar.destroy()
+        self.kill()
+        del(self)

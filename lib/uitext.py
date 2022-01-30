@@ -16,3 +16,7 @@ class UIText(pygame.sprite.Sprite):
         self.text = str(self.get_data_callback())
         (image, rect) = resources.Resources.instance().assets['fonts']['default'].render(str(self.text))
         self.image = image
+
+    def destroy(self):
+        self.kill()
+        del(self)
