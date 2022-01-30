@@ -1,21 +1,23 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
 
+from lib import resources
 
 vec = pygame.math.Vector2
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, height, velocity, pos, enemy_bullet, image):
+    def __init__(self, velocity, pos, enemy_bullet, image):
         super().__init__()
-        self.height = height
-        self.image = pygame.Surface((30, 30))
-        self.image.fill((128,255,40))
+        #Sprite Properties
         self.image = image
         self.rect = self.image.get_rect(center=pos)
-        # self.image = loader.load_image('assets/images/ejike.png')
-        # self.rect = self.image.get_rect(center = (100, 420))
 
+        #References
+        self.res = resources.Resources.instance()
+        self.game = self.res.game
+
+        #Motion Properties
         self.pos = (pos)
         self.vel = vec(0, velocity)
         self.enemy_bullet = enemy_bullet
@@ -28,6 +30,6 @@ class Bullet(pygame.sprite.Sprite):
             self.pos -= self.vel
         else:
             self.pos += self.vel
-        if self.pos.y < 0 - self.rect.height:
+        if self.pos.y < 0 - self.rect.height or self.pos.y > self.game.height:
             self.kill()
         self.rect.midbottom = self.pos

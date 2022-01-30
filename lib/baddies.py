@@ -1,5 +1,4 @@
-import threading
-from lib import resources, loader
+from lib import resources, bullet
 import pygame.math as math
 import random as randy
 import pygame
@@ -29,11 +28,10 @@ class Baddies(pygame.sprite.Sprite):
         self.rect = self.image.get_rect( center = (75,75))
         # self.pos = vec(start_position)
         # self.speed = speed
-        self.resources = resources.Resources.instance()
+        self.res = resources.Resources.instance()
 
         # for bullet type
         self.bullet_number = randy.randint(0, 4)
-        self.queued_shot = False
 
         # improvement stuff 
         """
@@ -73,7 +71,14 @@ class Baddies(pygame.sprite.Sprite):
         """
         self.move()
         self.take_damage()        
-        self.ready_shot()
+        self.shoot()
+
+
+    def enemy_fire(self, pos, bullet_number):
+        new_bullet = bullet.Bullet(6, pos, True, self.res.enemy_bullet_pool[bullet_number])
+        self.res.update_groups["enemy_bullet"].add(new_bullet)
+        self.res.draw_groups["render"].add(new_bullet)
+        self.res.assets['sounds']['laser1'].play()
 
 
     def move(self):
@@ -100,8 +105,8 @@ class Baddies(pygame.sprite.Sprite):
         Collision detection
         """
         
-        player_bullet = self.resources.update_groups['player_bullet']
-        player = self.resources.update_groups['player']
+        player_bullet = self.res.update_groups['player_bullet']
+        player = self.res.update_groups['player']
         
 
         """
@@ -116,17 +121,10 @@ class Baddies(pygame.sprite.Sprite):
 
         return (bullet_hit, player_hit)
 
-    def ready_shot(self):
-        if not self.queued_shot:
-            self.queued_shot = True
-            timer = threading.Timer(60, self.shoot())
-            timer.start()
-            
-            
+
     def shoot(self):
         if randy.randrange(0, 400) == 69:
-            resources.Resources.instance().enemy_fire(self.rect.midbottom, self.bullet_number)
-        self.queued_shot = False
+            self.enemy_fire(self.rect.midbottom, self.bullet_number)
 
     def switch_mode(self):
         """

@@ -29,6 +29,7 @@ class Resources():
         self.assets = {
             'images': {},
             'sounds': {},
+            'fonts': {},
         }
 
         for root, dirs, files in os.walk('assets'):
@@ -39,6 +40,12 @@ class Resources():
                 print(f"Loading {assetType} {file} as {assetName}")
                 asset = loader.load_asset(assetPath, assetType)
                 self.assets[assetType][assetName] = asset
+
+        # Manually load font
+
+        self.assets['fonts']['default'] = pygame.freetype.Font(None)
+        self.assets['fonts']['default'].size = 64
+        self.assets['fonts']['default'].antialiased = False
 
     def load_objects(self, game):
         self.badies_range = [5, 8]
@@ -57,7 +64,8 @@ class Resources():
             "enemy": pygame.sprite.Group(),
             "enemy_bullet": pygame.sprite.Group(),
             "player_bullet":pygame.sprite.Group(),
-            "player": pygame.sprite.Group()
+            "player": pygame.sprite.Group(),
+            "game": pygame.sprite.Group()
         }
 
         # The background is now another sprite. This code is a bit cumbersome, but this allows the bg to be altered
@@ -65,14 +73,20 @@ class Resources():
         self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
 
-        # Enemies
+        # Sprite for UI
+        self.ui_sprite = pygame.sprite.Sprite(self.draw_groups['ui'])
+        self.ui_sprite.image = pygame.Surface((256,64))
+        self.ui_sprite.rect = pygame.Rect(64,64,1,1)
+        self.ui_sprite.image.set_colorkey(pygame.Color(0,255,0))
+        self.ui_sprite.image.fill(pygame.Color(0,255,0))
+    
         self.load_badies()
 
         # Player
         ship_choices = []
         for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
             ship_choices.append(self.assets['images'][choice])
-        self.player = player.Player(random.choices(ship_choices)[0], self.game.height, self.game.width, .25, -.12 )
+        self.player = player.Player(random.choices(ship_choices)[0], self.assets['images']['power_mech'], self.assets['images']['_0000_mech'], .4, -.12 )
         self.update_groups["player"].add(self.player)
         self.draw_groups["render"].add(self.player)
 
@@ -84,7 +98,6 @@ class Resources():
         self.enemy_bullet_pool = []
         for bullet in ['_0008_droplet', 'spikeball', '_0007_missile', '_0005_thorn1', '_0006_thorn2' ]:
             self.enemy_bullet_pool.append(self.assets['images'][bullet])
-        
         
         
 
@@ -99,17 +112,3 @@ class Resources():
                 self.update_groups["enemy"].add(enemy)
                 self.draw_groups["render"].add(enemy)
                 self.position_variance += 75
-
-    def player_fire(self):
-        new_bullet = bullet.Bullet(self.game.height, 6, self.player.rect.midtop, False, self.player_bullet)
-        self.update_groups["player_bullet"].add(new_bullet)
-        self.draw_groups["render"].add(new_bullet)
-        self.assets['sounds']['laser1'].play()
-
-    def enemy_fire(self, pos, bullet_number):
-        new_bullet = bullet.Bullet(self.game.height, 6, pos, True, self.enemy_bullet_pool[bullet_number])
-        self.update_groups["enemy_bullet"].add(new_bullet)
-        self.draw_groups["render"].add(new_bullet)
-        self.assets['sounds']['laser1'].play()
-        
-        
