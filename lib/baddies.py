@@ -18,26 +18,20 @@ class Baddies(pygame.sprite.Sprite):
         """
         Initialize the alien and set its starting position
         """
-        
-        # load enemy image when we have it
-        # self.image = loader.load_image('assets/images/thorny.png')
-        # self.image.convert_alpha()
-        # self.rect = self.enemy.image.get_rect()
 
-        self.health = 10
-
+        # basics needed for enemy
         self.width = width
         self.height = height
         self.aggression = aggression
         self.image = image
         self.image.convert_alpha()
-        # self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
         # self.pos = vec(start_position)
         # self.speed = speed
-
         self.resources = resources.Resources.instance()
 
+
+        # improvement stuff 
         """
         adding movement options for random movements
         """
@@ -45,7 +39,7 @@ class Baddies(pygame.sprite.Sprite):
         # storing a copy of the image to try out rotation 
         self.rotate_img = self.image.copy()
         # random vector for enemy 
-        self.direction = pygame.Vector2(0, 0)
+        self.direction = pygame.Vector2(randy.uniform(0, 50), randy.uniform(0, 50))
         while self.direction.length() == 0:
             self.direction = pygame.Vector2(randy.uniform(1, 4), randy.uniform(1, 4))
 
@@ -59,6 +53,12 @@ class Baddies(pygame.sprite.Sprite):
         # let's play around with some rotation to make it look cool 
         #self.rotation = randy.uniform(0.3, 1)
         #self.angle = 0
+
+        """
+        Stuff to see if I can bounce the enemy off the screen edges 
+        """
+        self.screen = pygame.display.get_surface()
+        self.area = self.screen.get_rect()
         
         
         
