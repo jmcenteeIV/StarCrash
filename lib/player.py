@@ -91,6 +91,8 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = -1
+
+        self.take_damage()
     
     def move(self):
         self.acc = vec(0,0)
@@ -141,3 +143,26 @@ class Player(pygame.sprite.Sprite):
 
     def get_power_count(self):
         return self.power_count
+
+    def take_damage(self):
+        """
+        Collision detection
+        """
+        
+        enemy_bullet = self.res.update_groups['enemy_bullet']
+        enemy = self.res.update_groups['enemy']
+        
+
+        """
+        1st arg: name of sprite I want to check
+        2nd arg: name of group I want to compare against
+        3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
+        """
+        bullet_hit = pygame.sprite.spritecollide(self, enemy_bullet, True)
+        if bullet_hit:
+            self.kill()
+        player_hit = pygame.sprite.spritecollide(self, enemy, True)
+        if len(player_hit) > 0:
+            self.kill()
+
+        return (bullet_hit, player_hit)

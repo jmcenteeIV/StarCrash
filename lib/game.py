@@ -1,6 +1,7 @@
 import sys
 import pygame, pygame.freetype
 from pygame.locals import *
+from pygame.constants import *
 
 from lib import bullet, resources
 
@@ -58,6 +59,10 @@ class Game(object):
                 pygame.mixer.quit()
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                pressed_keys = pygame.key.get_pressed()
+                if pressed_keys[K_RETURN]:
+                    resources.Resources.instance().load_player()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
