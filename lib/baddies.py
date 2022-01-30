@@ -13,8 +13,13 @@ class Baddies(pygame.sprite.Sprite):
     Currently repersents a single enemy
     """
 
+<<<<<<< HEAD
     
     def __init__(self, width, height, start_position, speed, aggression):
+=======
+    # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
+    def __init__(self, image, height, width, start_position, speed, aggression):
+>>>>>>> bc84cf03d1972d23f033c8dc5745039323d6aa58
         super().__init__()
         """
         Initialize the alien and set its starting position
@@ -30,8 +35,7 @@ class Baddies(pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.aggression = aggression
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((255,0,0))
+        self.image = image
         self.rect = self.image.get_rect( center = (50,50))
         # self.pos = vec(start_position)
         # self.speed = speed
