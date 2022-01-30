@@ -57,8 +57,8 @@ class Baddies(pygame.sprite.Sprite):
         self.pos = pygame.Vector2(self.rect.center)
 
         # let's play around with some rotation to make it look cool 
-        self.rotation = randy.uniform(0.3, 1)
-        self.angle = 0
+        #self.rotation = randy.uniform(0.3, 1)
+        #self.angle = 0
         
         
         
@@ -78,8 +78,8 @@ class Baddies(pygame.sprite.Sprite):
         """
 
         self.pos += self.direction * self.speed 
-        self.angle += self.rotation 
-        self.image = pygame.transform.rotate(self.rotate_img, self.angle)
+        # self.angle += self.rotation 
+        # self.image = pygame.transform.rotate(self.rotate_img, self.angle)
 
         self.rect = self.image.get_rect(center=self.pos)
         
@@ -89,7 +89,7 @@ class Baddies(pygame.sprite.Sprite):
 
     def take_damage(self):
         """
-        
+        Collision detection
         """
         
         player_bullet = self.resources.update_groups['player_bullet']
@@ -101,7 +101,16 @@ class Baddies(pygame.sprite.Sprite):
         2nd arg: name of group I want to compare against
         3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
         """
-        hits = pygame.sprite.spritecollide(self, player_bullet, True)
+        bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
+        player_hit = pygame.sprite.spritecollide(self, player, True)
+
+        return (bullet_hit, player_hit)
+
+
+    def check_right_edge(self):
+        """
+        checking proximity to right edge of screen 
+        """
 
         
         
