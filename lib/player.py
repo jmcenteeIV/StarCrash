@@ -50,6 +50,17 @@ class Player(pygame.sprite.Sprite):
         self.drain_tick_count = 30
         self.drain_tick_rate = 30 
 
+         # Sound power up properties
+
+        #self.sound1 = pygame.mixer.Sound("/home/jammer/git/upsidedown-postman/assets/sounds/explosions4.wav")
+        self.sound1 = self.res.assets['sounds']['explosions4']
+        self.sound2 = self.res.assets['sounds']['powerup']
+
+        # setting sound volume to max (range 0.0 - 1.0) becasue other sounds drowned out the transformation
+        # TODO (matthew.moroge) may have to adjust other sound volumes if this is doesn't work, need feedback from the team first
+        self.sound1.set_volume(1)
+        self.sound2.set_volume(1)
+
         self.hands = False
 
         self.update_hand_positions()
@@ -79,6 +90,10 @@ class Player(pygame.sprite.Sprite):
                 self.next_mode_state = 1
                 TransformFlash(self.pos)
                 self.image = self.powered_mech_image
+                # super duct tape for playing two sounds together in pygame
+                self.sound1.play()
+                #sleep(0.5)
+                self.sound2.play()
                 self.rect = self.image.get_rect()
                 if not self.hands:
                     for left_side in [True, False]:
@@ -137,6 +152,8 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = 25
+        if pressed_keys[K_g]:
+            self.power_count = 2
             
     
     def move(self):
