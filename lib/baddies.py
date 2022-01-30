@@ -1,4 +1,5 @@
-from lib import resources, bullet
+from lib import resources, loader, game, bullet
+from lib.explosion import *
 import pygame.math as math
 import random as randy
 import pygame
@@ -33,7 +34,7 @@ class Baddies(pygame.sprite.Sprite):
 
         # sound?
         # I explosions3.wav should be used for the super mech (fists?) because its the biggest sound
-        self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
+        #self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
 
         # explosion animation?
         self.anime_count = 0
@@ -66,30 +67,6 @@ class Baddies(pygame.sprite.Sprite):
         #self.rotation = randy.uniform(0.3, 1)
         #self.angle = 0
 
-        
-        
-    def start_animation(self):
-        """
-        start explosion animation
-        """
-        # TODO this works but the frame rate is way too fast and it doesnt kill them at the end of the animation!!!!!!!!!????????
-
-        # this turns anime to true to start animation 
-        self.anime = True
-
-        explodey_imgs = [pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0001_L_hand.png'), 
-            pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0007_missile.png'), 
-            pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0014_spores.png')]
-        if self.anime:
-            image_index = self.anime_count // self.anime_frames
-            self.anime_count += 1
-
-            if image_index < len(explodey_imgs):
-                self.surf = explodey_imgs[image_index]
-                self.rect = self.surf.get_rect(center = self.rect.center)
-
-            else:
-                self.kill()
         
 
     def update(self):
@@ -143,19 +120,21 @@ class Baddies(pygame.sprite.Sprite):
         """
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
         if bullet_hit:
-            self.start_animation()
-            pygame.mixer.Sound.play(self.he_ded)
-            self.kill()
-        player_hit = pygame.sprite.spritecollide(self, player, True)
+            bullet_hit[0].parent.increment_power_count()
+            # pygame.mixer.Sound.play(self.he_ded)
+            self.explode()
 
-        return (bullet_hit, player_hit)
+        return bullet_hit
 
 
     def shoot(self):
         if randy.randrange(0, 400) == 69:
             self.enemy_fire(self.rect.midbottom, self.bullet_number)
 
-    
+    def explode(self):
+        Explosion( (self.rect.x, self.rect.y) )
+        self.destroy()
 
-        
-        
+    def destroy(self):
+        self.kill()
+        del(self)

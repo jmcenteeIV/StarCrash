@@ -51,6 +51,7 @@ class Resources():
         self.badies_range = [5, 8]
         self.game = game
         self.position_variance = 100
+        self.player_life = 4
 
         # These groups are meant to be used only for drawing sprites
         self.draw_groups = {
@@ -79,16 +80,10 @@ class Resources():
         self.ui_sprite.rect = pygame.Rect(64,64,1,1)
         self.ui_sprite.image.set_colorkey(pygame.Color(0,255,0))
         self.ui_sprite.image.fill(pygame.Color(0,255,0))
-    
+
+        self.load_player()
         self.load_badies()
 
-        # Player
-        ship_choices = []
-        for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
-            ship_choices.append(self.assets['images'][choice])
-        self.player = player.Player(random.choices(ship_choices)[0], self.assets['images']['power_mech'], self.assets['images']['_0000_mech'], .4, -.12 )
-        self.update_groups["player"].add(self.player)
-        self.draw_groups["render"].add(self.player)
 
         self.player_bullet_pool = []
         for bullet in ['_0011_bullet_green', '_0012_bullet_yellow', '_0013_bullet_pink', '_0017_bullet' ]:
@@ -113,8 +108,13 @@ class Resources():
                 self.draw_groups["render"].add(enemy)
                 self.position_variance += 75
 
-    def sound_picker(self):
-        """
-        dict of sounds to load 
-        """
-        pass
+
+    def load_player(self):
+        if self.player_life > 0:
+            ship_choices = []
+            for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
+                ship_choices.append(self.assets['images'][choice])
+            self.player = player.Player(random.choices(ship_choices)[0], self.assets['images']['power_mech'], self.assets['images']['_0000_mech'], .4, -.12 )
+            self.update_groups["player"].add(self.player)
+            self.draw_groups["render"].add(self.player)
+            self.player_life -= 1
