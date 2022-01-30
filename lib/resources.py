@@ -80,9 +80,9 @@ class Resources():
         self.load_badies(100)
 
         ship_choices = []
-        for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
+        for choice in ['ship_orange2', 'ship_red2']:
             ship_choices.append(self.assets['images'][choice])
-        self.player = player.Player(random.choices(ship_choices)[0], self.game.height, self.game.width, .25, -.12 )
+        self.player = player.Player(random.choices(ship_choices)[0], self.assets['images']['ship_yellow2'], .4, -.12 )
         self.update_groups["player"].add(self.player)
         self.draw_groups["render"].add(self.player)
 

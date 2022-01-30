@@ -5,27 +5,34 @@ from lib import resources, bullet, uitext
 
 vec = pygame.math.Vector2
 
+
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, image, height, width, acceleration, friction):
+    def __init__(self, ship_image, mech_image, acceleration, friction):
         super().__init__()
-        self.friction = friction
-        self.acceleration = acceleration
-        self.width = width
-        self.height = height
-        self.surf = pygame.Surface((30, 30))
-        self.surf.fill((128,255,40))
-        self.image = image
+
+        #Sprite Properties
+        self.image = ship_image
         self.rect = self.image.get_rect( center = (100, 420))
 
-        self.pos = vec((width/2, height))
+        #References
+        self.res = resources.Resources.instance()
+        self.game = self.res.game
+        self.ui_text = uitext.UIText()  
+
+        #Motion Properties
+        self.friction = friction
+        self.acceleration = acceleration
+        
+        self.pos = vec((self.game.width/2, self.game.height))
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
-        self.read_to_fire = True
+        #State Properties
+        self.ready_to_fire = True
         self.kills = 0
 
-        self.ui_text = uitext.UIText()
+        
 
     def update(self):
         self.move()
@@ -35,10 +42,8 @@ class Player(pygame.sprite.Sprite):
             if self.ready_to_fire:
                 self.ready_to_fire = False
                 self.player_fire()
-
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
-
     
     def move(self):
         self.acc = vec(0,0)
@@ -54,8 +59,8 @@ class Player(pygame.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        if self.pos.x > (self.width - (self.rect.width/2)):
-            self.pos.x, self.acc.x = (self.width - (self.rect.width/2)), 0
+        if self.pos.x > (self.game.width - (self.rect.width/2)):
+            self.pos.x, self.acc.x = (self.game.width - (self.rect.width/2)), 0
         if self.pos.x < (self.rect.width/2):
             self.pos.x, self.acc.x = (self.rect.width/2) , 0
 
@@ -69,15 +74,15 @@ class Player(pygame.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        if self.pos.y > self.height:
-            self.pos.y, self.acc.y = self.height, 0
+        if self.pos.y > self.game.height:
+            self.pos.y, self.acc.y = self.game.height, 0
         if self.pos.y < self.rect.height:
             self.pos.y, self.acc.y = (0 + self.rect.height), 0
 
         self.rect.midbottom = self.pos
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
+        new_bullet = bullet.Bullet(self.game.height, 6, self.res.player.rect.midtop)
         new_bullet.parent = self
         resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
         resources.Resources.instance().draw_groups["render"].add(new_bullet)
