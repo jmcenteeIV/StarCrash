@@ -76,7 +76,7 @@ class Player(pygame.sprite.Sprite):
                 
         if self.mode_state == 2:
             self.take_damage(False)
-            if self.power_count < 0:
+            if self.power_count < 3:
                 self.next_mode_state = 0
                 self.image = self.ship_image
 
