@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from lib import resources, loader, game
-=======
-from lib import resources, bullet
->>>>>>> 9268f2f4c1510f99ab2d036a1f3b990dc2d3a918
 import pygame.math as math
 import random as randy
 import pygame
