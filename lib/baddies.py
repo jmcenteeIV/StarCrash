@@ -1,4 +1,4 @@
-from lib import resources, loader, game
+from lib import resources, loader, game, bullet
 import pygame.math as math
 import random as randy
 import pygame
@@ -32,7 +32,7 @@ class Baddies(pygame.sprite.Sprite):
 
         # sound?
         # I explosions3.wav should be used for the super mech (fists?) because its the biggest sound
-        self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
+        #self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
 
         # for bullet type
         self.bullet_number = randy.randint(0, 4)
@@ -118,7 +118,7 @@ class Baddies(pygame.sprite.Sprite):
         """
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
         if bullet_hit:
-            pygame.mixer.Sound.play(self.he_ded)
+            # pygame.mixer.Sound.play(self.he_ded)
             self.kill()
 
         return bullet_hit
