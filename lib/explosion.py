@@ -17,6 +17,7 @@ class Boom(pygame.sprite.Sprite):
         # reference to game assests
         self.res = resources.Resources.instance()
         
+        # TIME FOR BED, you tried to list sounds, not images.. :(
         self.explodey_imgs = [pygame.image.load(f'/home/jammer/git/upsidedown-postman/assets/sounds/explosions{x}.wav') for x in range(1,4)]
 
     def update(self):
