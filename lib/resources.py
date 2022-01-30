@@ -41,11 +41,14 @@ class Resources():
                 asset = loader.load_asset(assetPath, assetType)
                 self.assets[assetType][assetName] = asset
 
+           
         # Manually load font
 
         self.assets['fonts']['default'] = pygame.freetype.Font(None)
         self.assets['fonts']['default'].size = 64
         self.assets['fonts']['default'].antialiased = False
+
+
 
     def load_objects(self, game):
         self.badies_range = [5, 8]
