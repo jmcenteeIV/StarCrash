@@ -49,6 +49,7 @@ class Game(object):
         for group in update_groups:
             update_groups[group].update()
 
+
     def process_events(self):
         for event in pygame.event.get():
             if event.type == QUIT:
