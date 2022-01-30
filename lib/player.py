@@ -2,6 +2,7 @@ import pygame
 from pygame.constants import *
 
 from lib.explosion import *
+from lib.transformflash import *
 from lib import resources, bullet, uitext, uiverticalbar
 
 vec = pygame.math.Vector2
@@ -66,6 +67,7 @@ class Player(pygame.sprite.Sprite):
             if self.power_count > 20:
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
+                #TransformFlash((self.rect.x, self.rect.y))
 
         if self.mode_state == 1:
             self.take_damage(True)
@@ -104,6 +106,7 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = 25
+            TransformFlash((self.rect.x, self.rect.y))
     
     def move(self):
         self.acc = vec(0,0)
