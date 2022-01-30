@@ -10,11 +10,13 @@ vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, ship_image, powered_mech_image, mech_image, acceleration, friction):
+    def __init__(self, acceleration, friction):
         super().__init__()
          #References
         self.res = resources.Resources.instance()
         self.game = self.res.game
+        self.res.update_groups["player"].add(self)
+        self.res.draw_groups["render"].add(self)
 
         #Sprite Properties
         self.images = [
@@ -22,10 +24,9 @@ class Player(pygame.sprite.Sprite):
             self.res.assets['images']['ship_yellow2'],
             self.res.assets['images']['ship_orange2'],
         ]
+        self.powered_mech_image = self.res.assets['images']['power_mech']
+        self.mech_image = self.res.assets['images']['_0000_mech']
         self.image = random.choice(self.images)
-        self.ship_image = ship_image
-        self.powered_mech_image = powered_mech_image
-        self.mech_image = mech_image
         self.rect = self.image.get_rect()
 
         self.ui_power_count = uitext.UIText()  
