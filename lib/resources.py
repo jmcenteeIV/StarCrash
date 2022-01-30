@@ -26,6 +26,7 @@ class Resources():
         self.assets = {
             'images': {},
             'sounds': {},
+            'fonts': {},
         }
 
         for root, dirs, files in os.walk('assets'):
@@ -36,6 +37,12 @@ class Resources():
                 print(f"Loading {assetType} {file} as {assetName}")
                 asset = loader.load_asset(assetPath, assetType)
                 self.assets[assetType][assetName] = asset
+
+        # Manually load font
+
+        self.assets['fonts']['default'] = pygame.freetype.Font(None)
+        self.assets['fonts']['default'].size = 64
+        self.assets['fonts']['default'].antialiased = False
 
     def load_objects(self, game):
         self.game = game
@@ -52,7 +59,8 @@ class Resources():
             "enemy": pygame.sprite.Group(),
             "enemy_bullet": pygame.sprite.Group(),
             "player_bullet":pygame.sprite.Group(),
-            "player": pygame.sprite.Group()
+            "player": pygame.sprite.Group(),
+            "game": pygame.sprite.Group()
         }
 
         # The background is now another sprite. This code is a bit cumbersome, but this allows the bg to be altered

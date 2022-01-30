@@ -1,7 +1,7 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP, K_SPACE
 
-from lib import resources, bullet
+from lib import resources, bullet, uitext
 
 vec = pygame.math.Vector2
 
@@ -24,6 +24,8 @@ class Player(pygame.sprite.Sprite):
 
         self.read_to_fire = True
         self.kills = 0
+
+        self.ui_text = uitext.UIText()
 
     def update(self):
         self.move()

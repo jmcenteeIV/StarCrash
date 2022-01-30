@@ -33,14 +33,8 @@ class Game(object):
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
 
-        self.default_font = pygame.freetype.Font(None)
-        self.default_font.size = 64
-        self.default_font.antialiased = False
-
         resources.Resources.instance().load_assets()
         resources.Resources.instance().load_objects(self)
-
-        self.default_font.render_to(resources.Resources.instance().ui_sprite.image,(0,0),'TEST')
 
     # High-level game loop
     def loop(self):
