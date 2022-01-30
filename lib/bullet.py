@@ -1,20 +1,24 @@
 import pygame
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
 
+from lib import resources
 
 vec = pygame.math.Vector2
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, height, velocity, pos):
+    def __init__(self, velocity, pos):
         super().__init__()
-        self.height = height
+        #Sprite Properties
         self.image = pygame.Surface((30, 30))
         self.image.fill((128,255,40))
         self.rect = self.image.get_rect(center=pos)
-        # self.image = loader.load_image('assets/images/ejike.png')
-        # self.rect = self.image.get_rect(center = (100, 420))
 
+        #References
+        self.res = resources.Resources.instance()
+        self.game = self.res.game
+
+        #Motion Properties
         self.pos = (pos)
         self.vel = vec(0, velocity)
 

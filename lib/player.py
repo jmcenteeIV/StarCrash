@@ -82,7 +82,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(self.game.height, 6, self.res.player.rect.midtop)
+        new_bullet = bullet.Bullet(6, self.res.player.rect.midtop)
         new_bullet.parent = self
         resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
         resources.Resources.instance().draw_groups["render"].add(new_bullet)
