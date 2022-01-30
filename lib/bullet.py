@@ -24,6 +24,7 @@ class Bullet(pygame.sprite.Sprite):
         self.enemy_bullet = enemy_bullet
 
         # Sound Properties
+        # couldn't use assets because it won't allow mixer.Sound method call 
         self.enemy_shots = [pygame.mixer.Sound(f"/home/jammer/git/upsidedown-postman/assets/sounds/shots{x}.wav") for x in range(1,3)]
         self.rand_shots = random.choice(self.enemy_shots)
 
