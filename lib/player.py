@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
 
         #State Properties
         self.ready_to_fire = True
-        self.power_count = 0
+        self.power_count = 1
         self.mode_state = 0
         self.next_mode_state = 0
 
@@ -50,18 +50,24 @@ class Player(pygame.sprite.Sprite):
         #Handle kludgey timer. Pls implement a better timer soon!
         do_drain = False
         self.drain_tick_count = self.drain_tick_count - 1
-        if(self.drain_tick_count <= 0):
+        if self.drain_tick_count <= 0:
             self.drain_tick_count = 30
             do_drain = True
 
+        if self.power_count <= 0:
+            self.destroy()
+
+        # Player mode state machine
         self.next_mode_state = self.mode_state
 
         if self.mode_state == 0:
+            self.take_damage(False)
             if self.power_count > 20:
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
 
         if self.mode_state == 1:
+            self.take_damage(True)
             if do_drain:
                 self.power_count = self.power_count -1
             if self.power_count < 11:
@@ -69,6 +75,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.mech_image
                 
         if self.mode_state == 2:
+            self.take_damage(False)
             if self.power_count < 0:
                 self.next_mode_state = 0
                 self.image = self.ship_image
@@ -82,6 +89,8 @@ class Player(pygame.sprite.Sprite):
 
         self.mode_state = self.next_mode_state
 
+        #End state machine
+
         self.move()
 
         pressed_keys = pygame.key.get_pressed()
@@ -93,9 +102,7 @@ class Player(pygame.sprite.Sprite):
             self.ready_to_fire = True
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
-            self.power_count = -1
-
-        self.take_damage()
+            self.power_count = 25
     
     def move(self):
         self.acc = vec(0,0)
@@ -152,13 +159,13 @@ class Player(pygame.sprite.Sprite):
         self.kill()
         del(self)
         
-    def take_damage(self):
+    def take_damage(self, invulnerable):
         """
         Collision detection
         """
         
-        enemy_bullet = self.res.update_groups['enemy_bullet']
-        enemy = self.res.update_groups['enemy']
+        enemy_bullets = self.res.update_groups['enemy_bullet']
+        enemies = self.res.update_groups['enemy']
         
 
         """
@@ -166,12 +173,12 @@ class Player(pygame.sprite.Sprite):
         2nd arg: name of group I want to compare against
         3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
         """
-        bullet_hit = pygame.sprite.spritecollide(self, enemy_bullet, True)
-        if bullet_hit:
-            self.destroy()
+        bullet_hits = pygame.sprite.spritecollide(self, enemy_bullets, True)
+        if bullet_hits and not invulnerable:
+            self.power_count = self.power_count - 1
             
-        player_hit = pygame.sprite.spritecollide(self, enemy, True)
-        if len(player_hit) > 0:
-            self.destroy()
+        enemy_hits = pygame.sprite.spritecollide(self, enemies, True)
+        if enemy_hits and not invulnerable:
+            self.power_count = self.power_count - 1
 
-        return (bullet_hit, player_hit)
+        return (bullet_hits, enemy_hits)
