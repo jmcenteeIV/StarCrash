@@ -163,11 +163,18 @@ class Player(pygame.sprite.Sprite):
             self.right_hand.move(self.rect.topright)
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
-        new_bullet.parent = self
-        self.res.update_groups["player_bullet"].add(new_bullet)
-        self.res.draw_groups["render"].add(new_bullet)
-        self.res.assets['sounds']['laser1'].play()
+        if self.image == self.ship_image:
+            new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
+            new_bullet.parent = self
+            self.res.update_groups["player_bullet"].add(new_bullet)
+            self.res.draw_groups["render"].add(new_bullet)
+            self.res.assets['sounds']['laser1'].play()
+        if self.image == self.powered_mech_image:
+            new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
+            new_bullet.parent = self
+            self.res.update_groups["player_bullet"].add(new_bullet)
+            self.res.draw_groups["render"].add(new_bullet)
+            self.res.assets['sounds']['shots3'].play()
     
     def increment_power_count(self):
         self.power_count = self.power_count + 1
