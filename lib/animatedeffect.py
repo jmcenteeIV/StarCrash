@@ -3,15 +3,20 @@ import pygame
 
 from lib import resources
 
+vec = pygame.math.Vector2
+
 class AnimatedEffect(pygame.sprite.Sprite):
 
-    def __init__(self, pos, images, animation_rate: int=10, lifetime: int=0, playback_mode: int=0):
+    def __init__(self, pos: vec, images, animation_rate: int=10, lifetime: int=0, playback_mode: int=0, parent=None):
         super().__init__()
+        self.pos = pos
         self.res = resources.Resources.instance()
         self.images = images
         self.current_frame = 0
         self.image = self.images[self.current_frame]
-        self.rect = pygame.Rect(pos[0], pos[1], 1, 1)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos
+        self.parent = parent
 
         self.res.update_groups["game"].add(self)
         self.res.draw_groups["render"].add(self)
@@ -24,6 +29,10 @@ class AnimatedEffect(pygame.sprite.Sprite):
         self.animation_ended = False            # True when animation ends
 
     def update(self):
+        self.rect.center = self.pos
+        if self.parent:
+            self.pos = self.parent.pos
+
         self.time_count = self.time_count + 1
 
         if self.time_count % self.animation_rate == self.animation_rate -1:

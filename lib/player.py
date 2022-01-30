@@ -17,7 +17,8 @@ class Player(pygame.sprite.Sprite):
         self.ship_image = ship_image
         self.powered_mech_image = powered_mech_image
         self.mech_image = mech_image
-        self.rect = self.image.get_rect( center = (106, 100))
+        self.rect = self.image.get_rect()
+        
 
         #References
         self.res = resources.Resources.instance()
@@ -33,6 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = acceleration
         
         self.pos = vec((self.game.width/2, self.game.height))
+        self.rect.center = self.pos
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
@@ -41,10 +43,11 @@ class Player(pygame.sprite.Sprite):
         self.power_count = 1
         self.mode_state = 0
         self.next_mode_state = 0
+        self.transform_ready= True
 
         #Kludgey timer. Pls implement a better timer soon!
         self.drain_tick_count = 30
-        self.drain_tick_rate = 30
+        self.drain_tick_rate = 60
         
         self.hands = False
         
@@ -56,6 +59,8 @@ class Player(pygame.sprite.Sprite):
         if self.drain_tick_count <= 0:
             self.drain_tick_count = 30
             do_drain = True
+            print(f"Rect: {self.rect.x} {self.rect.y}")
+            print(f"Pos: {self.pos.x} {self.pos.y}")
 
         if self.power_count <= 0:
             self.explode()
@@ -67,8 +72,9 @@ class Player(pygame.sprite.Sprite):
             self.take_damage(False)
             if self.power_count > 20:
                 self.next_mode_state = 1
+                TransformFlash(self.pos)
                 self.image = self.powered_mech_image
-                #TransformFlash((self.rect.x, self.rect.y))
+                self.rect = self.image.get_rect()
                 if not self.hands:
                     for left_side in [True, False]:
                         if left_side:
@@ -94,7 +100,9 @@ class Player(pygame.sprite.Sprite):
             self.take_damage(False)
             if self.power_count < 5:
                 self.next_mode_state = 0
+                TransformFlash(self.pos)
                 self.image = self.ship_image
+                self.rect = self.image.get_rect()
                 self.left_hand.kill()
                 self.right_hand.kill()
                 self.hands = False
@@ -124,7 +132,7 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = 25
-            TransformFlash((self.rect.x, self.rect.y))
+            
     
     def move(self):
         self.acc = vec(0,0)
@@ -155,12 +163,12 @@ class Player(pygame.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        if self.pos.y > self.game.height:
-            self.pos.y, self.acc.y = self.game.height, 0
-        if self.pos.y < self.rect.height:
-            self.pos.y, self.acc.y = (0 + self.rect.height), 0
+        if self.pos.y > self.game.height-(self.rect.height/2):
+            self.pos.y, self.acc.y = self.game.height-(self.rect.height/2), 0
+        if self.pos.y < (self.rect.height/2):
+            self.pos.y, self.acc.y = (self.rect.height/2), 0
 
-        self.rect.midbottom = self.pos
+        self.rect.center= self.pos
 
         if self.hands:
             self.left_hand.move(self.rect.topleft)
@@ -196,7 +204,6 @@ class Player(pygame.sprite.Sprite):
         """
         Collision detection
         """
-        
         enemy_bullets = self.res.update_groups['enemy_bullet']
         enemies = self.res.update_groups['enemy']
         
