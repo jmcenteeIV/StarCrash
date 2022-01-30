@@ -79,7 +79,12 @@ class Resources():
         self.player_bullet_pool = []
         for bullet in ['_0011_bullet_green', '_0012_bullet_yellow', '_0013_bullet_pink', '_0017_bullet' ]:
             self.player_bullet_pool.append(self.assets['images'][bullet])
-        self.bullet = self.player_bullet_pool[self.bullet_number]
+        self.player_bullet = self.player_bullet_pool[self.bullet_number]
+
+        self.enemy_bullet_pool = []
+        for bullet in ['_0008_droplet', 'spikeball', '_0007_missile', '_0005_thorn1', '_0006_thorn2' ]:
+            self.enemy_bullet_pool.append(self.assets['images'][bullet])
+        
         
         
 
@@ -90,14 +95,20 @@ class Resources():
                 baddies_choices = []
                 for choice in ['eyeball', 'maw', 'thorny']:
                     baddies_choices.append(self.assets['images'][choice])
-                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, (self.game.width/2 + self.position_variance, 60), 2, 5)
+                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, 5)
                 self.update_groups["enemy"].add(enemy)
                 self.draw_groups["render"].add(enemy)
                 self.position_variance += 75
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(self.game.height, 6, self.player.rect.midtop, self.bullet)
+        new_bullet = bullet.Bullet(self.game.height, 6, self.player.rect.midtop, False, self.player_bullet)
         self.update_groups["player_bullet"].add(new_bullet)
+        self.draw_groups["render"].add(new_bullet)
+        self.assets['sounds']['laser1'].play()
+
+    def enemy_fire(self, pos, bullet_number):
+        new_bullet = bullet.Bullet(self.game.height, 6, pos, True, self.enemy_bullet_pool[bullet_number])
+        self.update_groups["enemy_bullet"].add(new_bullet)
         self.draw_groups["render"].add(new_bullet)
         self.assets['sounds']['laser1'].play()
         

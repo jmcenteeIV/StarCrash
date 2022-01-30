@@ -6,7 +6,7 @@ vec = pygame.math.Vector2
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, height, velocity, pos, image):
+    def __init__(self, height, velocity, pos, enemy_bullet, image):
         super().__init__()
         self.height = height
         self.image = pygame.Surface((30, 30))
@@ -18,12 +18,16 @@ class Bullet(pygame.sprite.Sprite):
 
         self.pos = (pos)
         self.vel = vec(0, velocity)
+        self.enemy_bullet = enemy_bullet
 
     def update(self):
         self.move()
     
     def move(self):
-        self.pos -= self.vel
+        if not self.enemy_bullet:
+            self.pos -= self.vel
+        else:
+            self.pos += self.vel
         if self.pos.y < 0 - self.rect.height:
             self.kill()
         self.rect.midbottom = self.pos
