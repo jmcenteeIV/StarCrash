@@ -61,8 +61,10 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 pressed_keys = pygame.key.get_pressed()
-                if pressed_keys[K_RETURN]:
-                    resources.Resources.instance().load_player()
+                if pressed_keys[K_ESCAPE]:
+                    pygame.mixer.quit()
+                    pygame.quit()
+                    sys.exit()
 
     def draw(self):
         self.screen.fill((0, 0, 0))

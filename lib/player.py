@@ -10,36 +10,50 @@ vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, ship_image, powered_mech_image, mech_image, acceleration, friction):
+    def __init__(self, acceleration, friction):
         super().__init__()
-
-        #Sprite Properties
-        self.image = ship_image
-        self.ship_image = ship_image
-        self.powered_mech_image = powered_mech_image
-        self.mech_image = mech_image
-        self.rect = self.image.get_rect()
-        
-
-        #References
+         #References
         self.res = resources.Resources.instance()
         self.game = self.res.game
-        self.ui_text = uitext.UIText()  
-        self.ui_text.get_data_callback = self.get_power_count
+        self.res.update_groups["player"].add(self)
+        self.res.draw_groups["render"].add(self)
+
+        #Sprite Properties
+        self.images = [
+            self.res.assets['images']['ship_red2'],
+            self.res.assets['images']['ship_yellow2'],
+            self.res.assets['images']['ship_orange2'],
+        ]
+        self.powered_mech_image = self.res.assets['images']['power_mech']
+        self.mech_image = self.res.assets['images']['_0000_mech']
+        self.image = random.choice(self.images)
+        self.rect = self.image.get_rect()
+
         self.ui_bar = uiverticalbar.UIVerticalBar()
         self.ui_bar.get_data_callback = self.get_power_count
+
+        self.ui_lives_count = uitext.UIText()
+        self.ui_lives_count.rect = pygame.Rect(64,600,1,1)
+        self.ui_lives_count.get_data_callback = self.get_num_lives
+
+        self.ui_gameover_label = uitext.UIText()
+        self.ui_gameover_label.rect = pygame.Rect((self.game.width/2)-128,self.game.height/2,1,1)
+        self.ui_gameover_label.get_data_callback = self.get_gameover_string
 
 
         #Motion Properties
         self.friction = friction
         self.acceleration = acceleration
         
-        self.pos = vec((self.game.width/2, self.game.height))
+        self.spawn_pos = vec((self.game.width/2, self.game.height))
+        self.pos = self.spawn_pos
         self.rect.center = self.pos
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
         #State Properties
+        self.game_over = False
+        self.num_lives = 3
         self.ready_to_fire = True
         self.power_count = 3
         self.mode_state = 0
@@ -157,11 +171,6 @@ class Player(pygame.sprite.Sprite):
                 self.player_fire()
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
-        # To test player mode state change. Remove after testing
-        if pressed_keys[K_t]:
-            self.power_count = 25
-        if pressed_keys[K_g]:
-            self.power_count = 2
             
     
     def move(self):
@@ -209,14 +218,15 @@ class Player(pygame.sprite.Sprite):
         if self.hands:
             self.left_hand.sweeping_attack()
             self.right_hand.sweeping_attack()
-        if self.image == self.ship_image:
+        if self.mode_state == 0 or self.mode_state == 2:
             new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
             new_bullet.parent = self
             self.res.update_groups["player_bullet"].add(new_bullet)
             self.res.draw_groups["render"].add(new_bullet)
             self.res.assets['sounds']['laser1'].play()
-        if self.image == self.powered_mech_image:
+        if self.mode_state == 1:
             new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
+            new_bullet.image = self.res.assets['images']['_0020_nuke']
             new_bullet.parent = self
             self.res.update_groups["player_bullet"].add(new_bullet)
             self.res.draw_groups["render"].add(new_bullet)
@@ -230,13 +240,12 @@ class Player(pygame.sprite.Sprite):
 
     def explode(self):
         Explosion((self.rect.x, self.rect.y))
-        self.destroy()
+        self.do_respawn()
 
     def destroy(self):
         if self.hands:
             self.left_hand.kill()
             self.right_hand.kill()
-        self.ui_text.destroy()
         self.ui_bar.destroy()
         self.kill()
         del(self)
@@ -274,3 +283,30 @@ class Player(pygame.sprite.Sprite):
         else:
             self.position_for_left = self.rect.midright
             self.position_for_right =  self.rect.midright
+
+    def get_num_lives(self):
+        return self.num_lives
+
+    def get_gameover_string(self):
+        if self.game_over:
+            return "Game Over"
+        else:
+            return ""
+
+    def do_respawn(self):
+        self.num_lives -= 1
+        if self.num_lives == 0:
+            self.power_count = 1
+            self.kill()
+            self.game_over = True
+            self.ui_bar.destroy()
+            self.ui_lives_count.destroy()
+        else:
+            self.num_lives -= 1
+            self.image = random.choice(self.images)
+            self.rect = self.image.get_rect()
+            self.mode_state = 0
+            self.next_mode_state = 0
+            self.power_count = 0
+            self.ready_to_fire = True
+            self.pos = self.spawn_pos

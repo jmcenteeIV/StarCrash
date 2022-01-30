@@ -120,14 +120,7 @@ class Resources():
 
 
     def load_player(self):
-        if self.player_life > 0:
-            ship_choices = []
-            for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
-                ship_choices.append(self.assets['images'][choice])
-            self.player = player.Player(random.choices(ship_choices)[0], self.assets['images']['power_mech'], self.assets['images']['_0000_mech'], .4, -.12 )
-            self.update_groups["player"].add(self.player)
-            self.draw_groups["render"].add(self.player)
-            self.player_life -= 1
+        self.player = player.Player( .4, -.12 )
 
     def song_change(self):
         if self.track:
