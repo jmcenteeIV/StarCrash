@@ -10,8 +10,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, velocity, pos, image):
         super().__init__()
         #Sprite Properties
-        self.image = pygame.Surface((30, 30))
-        self.image.fill((128,255,40))
         self.image = image
         self.rect = self.image.get_rect(center=pos)
 
