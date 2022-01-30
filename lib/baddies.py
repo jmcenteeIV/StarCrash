@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-from lib import resources, loader, game
-=======
 from lib import resources, bullet
->>>>>>> 9268f2f4c1510f99ab2d036a1f3b990dc2d3a918
 import pygame.math as math
 import random as randy
 import pygame
+
 
 
 
@@ -38,6 +35,11 @@ class Baddies(pygame.sprite.Sprite):
         # I explosions3.wav should be used for the super mech (fists?) because its the biggest sound
         self.he_ded = pygame.mixer.Sound('/home/jammer/git/upsidedown-postman/assets/sounds/explosions1.wav')
 
+        # explosion animation?
+        self.anime_count = 0
+        self.anime_frames = 3
+        self.anime = False
+
         # for bullet type
         self.bullet_number = randy.randint(0, 4)
 
@@ -66,7 +68,28 @@ class Baddies(pygame.sprite.Sprite):
 
         
         
-        
+    def start_animation(self):
+        """
+        start explosion animation
+        """
+        # TODO this works but the frame rate is way too fast and it doesnt kill them at the end of the animation!!!!!!!!!????????
+
+        # this turns anime to true to start animation 
+        self.anime = True
+
+        explodey_imgs = [pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0001_L_hand.png'), 
+            pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0007_missile.png'), 
+            pygame.image.load('/home/jammer/git/upsidedown-postman/assets/images/_0014_spores.png')]
+        if self.anime:
+            image_index = self.anime_count // self.anime_frames
+            self.anime_count += 1
+
+            if image_index < len(explodey_imgs):
+                self.surf = explodey_imgs[image_index]
+                self.rect = self.surf.get_rect(center = self.rect.center)
+
+            else:
+                self.kill()
         
 
     def update(self):
@@ -120,12 +143,8 @@ class Baddies(pygame.sprite.Sprite):
         """
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
         if bullet_hit:
-<<<<<<< HEAD
-                      
-            #self.resources.load_assets['sounds']['explosions1.wav'].play()
-=======
+            self.start_animation()
             pygame.mixer.Sound.play(self.he_ded)
->>>>>>> ccdc04702c92ae2bc5b310759efdb64050e53cbe
             self.kill()
         player_hit = pygame.sprite.spritecollide(self, player, True)
 
