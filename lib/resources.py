@@ -23,10 +23,7 @@ class Resources():
 
     # Load and store assets in a centralized location. 
     # For now this is also where we spawn our initial game objects.
-    def load_assets(self, game):
-
-        self.game = game
-
+    def load_assets(self):
         self.assets = {
             'images': {},
             'sounds': {},
@@ -40,6 +37,9 @@ class Resources():
                 print(f"Loading {assetType} {file} as {assetName}")
                 asset = loader.load_asset(assetPath, assetType)
                 self.assets[assetType][assetName] = asset
+
+    def load_objects(self, game):
+        self.game = game
 
         # These groups are meant to be used only for drawing sprites
         self.draw_groups = {
