@@ -26,6 +26,8 @@ class Resources():
     def load_assets(self):
         self.bullet_number = random.randint(0,3)
         self.position_variance = 100
+        self.track = ""
+        self.music_hype = False
         self.assets = {
             'images': {},
             'sounds': {},
@@ -48,7 +50,10 @@ class Resources():
         self.assets['fonts']['default'].size = 64
         self.assets['fonts']['default'].antialiased = False
 
-
+        # Change volume
+        for sound in self.assets["sounds"]:
+            vol = self.assets["sounds"][sound].get_volume()
+            self.assets["sounds"][sound].set_volume(vol*.05)
 
     def load_objects(self, game):
         self.badies_range = [5, 8]
@@ -96,6 +101,8 @@ class Resources():
         self.enemy_bullet_pool = []
         for bullet in ['_0008_droplet', 'spikeball', '_0007_missile', '_0005_thorn1', '_0006_thorn2' ]:
             self.enemy_bullet_pool.append(self.assets['images'][bullet])
+
+        
         
         
 
@@ -121,3 +128,15 @@ class Resources():
             self.update_groups["player"].add(self.player)
             self.draw_groups["render"].add(self.player)
             self.player_life -= 1
+
+    def song_change(self):
+        if self.track:
+                self.assets["sounds"][self.track].stop()
+        if not self.music_hype:
+            self.music_list = ["Crazy Games - Wake Up","Go Gadget - Password","Big Bang Boom - Healing","You Kill My Brother - Go! Go! Go!"]
+            self.track = random.choices(self.music_list)[0]
+            self.assets["sounds"][self.track].play()
+        else:
+            self.music_list = ["Son Of A Bit! - Chased By A Running Chupacabra"]
+            self.track = random.choices(self.music_list)[0]
+            self.assets["sounds"][self.track].play()
