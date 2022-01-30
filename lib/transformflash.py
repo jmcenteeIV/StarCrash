@@ -20,7 +20,7 @@ class TransformFlash(AnimatedEffect):
         super().__init__(pos, self.images, animation_rate, lifetime, mode)
         
         self.sound = self.res.assets['sounds']['powerup']
-        self.sound.play()
+        #self.sound.play()
 
         #self.finished_callback = lambda *_, **__: None # Callback function to let Player know transformation is finished
 
