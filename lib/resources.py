@@ -132,5 +132,5 @@ class Resources():
             self.track = random.choices(self.music_list)[0]
 
         vol = self.assets["sounds"][self.track].get_volume()
-        self.assets["sounds"][self.track].set_volume(vol*.6)
+        self.assets["sounds"][self.track].set_volume(vol*.5)
         self.assets["sounds"][self.track].play()
