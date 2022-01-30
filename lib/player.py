@@ -1,6 +1,9 @@
 import pygame
 from pygame.constants import *
+from time import sleep
 
+from lib.explosion import *
+from lib.transformflash import *
 from lib import resources, bullet, uitext, uiverticalbar, hands
 
 vec = pygame.math.Vector2
@@ -15,7 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.ship_image = ship_image
         self.powered_mech_image = powered_mech_image
         self.mech_image = mech_image
-        self.rect = self.image.get_rect( center = (53, 100))
+        self.rect = self.image.get_rect()
+        
 
         #References
         self.res = resources.Resources.instance()
@@ -31,18 +35,20 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = acceleration
         
         self.pos = vec((self.game.width/2, self.game.height))
+        self.rect.center = self.pos
         self.vel = vec(0,0)
         self.acc = vec(0,0)
 
         #State Properties
         self.ready_to_fire = True
-        self.power_count = 5
+        self.power_count = 3
         self.mode_state = 0
         self.next_mode_state = 0
+        self.transform_ready= True
 
         #Kludgey timer. Pls implement a better timer soon!
         self.drain_tick_count = 30
-        self.drain_tick_rate = 30
+        self.drain_tick_rate = 30 
 
         self.hands = False
 
@@ -58,9 +64,11 @@ class Player(pygame.sprite.Sprite):
         if self.drain_tick_count <= 0:
             self.drain_tick_count = 30
             do_drain = True
+            print(f"Rect: {self.rect.x} {self.rect.y}")
+            print(f"Pos: {self.pos.x} {self.pos.y}")
 
         if self.power_count <= 0:
-            self.destroy()
+            self.explode()
 
         # Player mode state machine
         self.next_mode_state = self.mode_state
@@ -69,7 +77,9 @@ class Player(pygame.sprite.Sprite):
             self.take_damage(False)
             if self.power_count > 20:
                 self.next_mode_state = 1
+                TransformFlash(self.pos)
                 self.image = self.powered_mech_image
+                self.rect = self.image.get_rect()
                 if not self.hands:
                     for left_side in [True, False]:
                         if left_side:
@@ -95,7 +105,9 @@ class Player(pygame.sprite.Sprite):
             self.take_damage(False)
             if self.power_count < 5:
                 self.next_mode_state = 0
+                TransformFlash(self.pos)
                 self.image = self.ship_image
+                self.rect = self.image.get_rect()
                 self.left_hand.kill()
                 self.right_hand.kill()
                 self.hands = False
@@ -125,6 +137,7 @@ class Player(pygame.sprite.Sprite):
         # To test player mode state change. Remove after testing
         if pressed_keys[K_t]:
             self.power_count = 25
+            
     
     def move(self):
         self.acc = vec(0,0)
@@ -156,32 +169,43 @@ class Player(pygame.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
-        if self.pos.y > self.game.height:
-            self.pos.y, self.acc.y = self.game.height, 0
-        if self.pos.y < self.rect.height:
-            self.pos.y, self.acc.y = (0 + self.rect.height), 0
+        if self.pos.y > self.game.height-(self.rect.height/2):
+            self.pos.y, self.acc.y = self.game.height-(self.rect.height/2), 0
+        if self.pos.y < (self.rect.height/2):
+            self.pos.y, self.acc.y = (self.rect.height/2), 0
 
-        self.rect.midbottom = self.pos
+        self.rect.center= self.pos
 
         if self.hands:
             self.left_hand.player_pos = self.position_for_left
             self.right_hand.player_pos = self.position_for_right
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
-        new_bullet.parent = self
-        self.res.update_groups["player_bullet"].add(new_bullet)
-        self.res.draw_groups["render"].add(new_bullet)
-        self.res.assets['sounds']['laser1'].play()
         if self.hands:
             self.left_hand.sweeping_attack()
             self.right_hand.sweeping_attack()
+        if self.image == self.ship_image:
+            new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
+            new_bullet.parent = self
+            self.res.update_groups["player_bullet"].add(new_bullet)
+            self.res.draw_groups["render"].add(new_bullet)
+            self.res.assets['sounds']['laser1'].play()
+        if self.image == self.powered_mech_image:
+            new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
+            new_bullet.parent = self
+            self.res.update_groups["player_bullet"].add(new_bullet)
+            self.res.draw_groups["render"].add(new_bullet)
+            self.res.assets['sounds']['shots3'].play()
     
     def increment_power_count(self):
         self.power_count = self.power_count + 1
 
     def get_power_count(self):
         return self.power_count
+
+    def explode(self):
+        Explosion((self.rect.x, self.rect.y))
+        self.destroy()
 
     def destroy(self):
         if self.hands:
@@ -196,7 +220,6 @@ class Player(pygame.sprite.Sprite):
         """
         Collision detection
         """
-        
         enemy_bullets = self.res.update_groups['enemy_bullet']
         enemies = self.res.update_groups['enemy']
         
@@ -210,10 +233,13 @@ class Player(pygame.sprite.Sprite):
         if bullet_hits and not invulnerable:
             self.power_count = self.power_count - 1
             
-        enemy_hits = pygame.sprite.spritecollide(self, enemies, True)
-        if enemy_hits and not invulnerable:
-            self.power_count = self.power_count - 1
-
+        enemy_hits = pygame.sprite.spritecollide(self, enemies, False)
+        if enemy_hits:
+            if not invulnerable:
+                self.power_count = self.power_count - 1
+            for enemy in enemy_hits:
+                enemy.explode()
+            
         return (bullet_hits, enemy_hits)
 
     def update_hand_positions(self):

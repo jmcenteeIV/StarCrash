@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP
 
 from lib import resources
@@ -7,7 +8,7 @@ vec = pygame.math.Vector2
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, velocity, pos, enemy_bullet, image):
+    def __init__(self, velocity, pos, enemy_bullet, image,):
         super().__init__()
         #Sprite Properties
         self.image = image
@@ -22,6 +23,14 @@ class Bullet(pygame.sprite.Sprite):
         self.vel = vec(0, velocity)
         self.enemy_bullet = enemy_bullet
 
+        # Sound Properties
+        # couldn't use assets because it won't allow mixer.Sound method call 
+        #self.enemy_shots = [pygame.mixer.Sound(f"/home/jammer/git/upsidedown-postman/assets/sounds/shots{x}.wav") for x in range(1,3)]
+        if(enemy_bullet):
+            self.enemy_shots = [self.res.assets['sounds'][f"shots{x}"] for x in range(1,3)]
+            self.rand_shots = random.choice(self.enemy_shots)
+            self.rand_shots.play()
+        
     def update(self):
         self.move()
     
