@@ -23,9 +23,11 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0,0)
 
         self.read_to_fire = True
+        self.num_shots = 0
         self.kills = 0
 
         self.ui_text = uitext.UIText()
+        self.ui_text.get_data_callback = self.get_num_shots
 
     def update(self):
         self.move()
@@ -38,7 +40,6 @@ class Player(pygame.sprite.Sprite):
 
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
-
     
     def move(self):
         self.acc = vec(0,0)
@@ -82,6 +83,10 @@ class Player(pygame.sprite.Sprite):
         resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
         resources.Resources.instance().draw_groups["render"].add(new_bullet)
         resources.Resources.instance().assets['sounds']['laser1'].play()
+        self.num_shots = self.num_shots + 1
     
     def increment_kills(self):
         self.kills = self.kills + 1
+
+    def get_num_shots(self):
+        return self.num_shots
