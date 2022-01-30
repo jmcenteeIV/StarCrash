@@ -45,7 +45,7 @@ class Baddies(pygame.sprite.Sprite):
 
         # constant random speed for enemy
         self.direction.normalize_ip()
-        self.speed = randy.uniform(1, 3)
+        self.speed = randy.uniform(0.3, 3)
 
         # storing the position in a vector, because math is hard
         self.pos = pygame.Vector2(self.rect.center)
@@ -78,6 +78,8 @@ class Baddies(pygame.sprite.Sprite):
         """
 
         self.pos += self.direction * self.speed 
+
+        # used for rotating enemy, may use later
         # self.angle += self.rotation 
         # self.image = pygame.transform.rotate(self.rotate_img, self.angle)
 
@@ -102,6 +104,8 @@ class Baddies(pygame.sprite.Sprite):
         3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
         """
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
+        if bullet_hit:
+            self.kill()
         player_hit = pygame.sprite.spritecollide(self, player, True)
 
         return (bullet_hit, player_hit)
