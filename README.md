@@ -1,6 +1,11 @@
 # upsidedown-postman
 GGJ2022 postman game
 
+## Credits
+Thanks to Tim Pulin for sprite graphics!
+
+Thanks to Thomas M for sound effects!
+
 ## Creating a Class/Library file
 Create the file in lib such as `lib/example_class_file.py`.  Then add to the `lib/__init__.py` the name of the file to the import line.
 Fore example `from . import utility, loader, player, example_class_file`.  This will allow you to use:
