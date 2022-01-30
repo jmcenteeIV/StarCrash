@@ -1,4 +1,5 @@
 from lib import resources, loader, game, bullet
+from lib.explosion import *
 import pygame.math as math
 import random as randy
 import pygame
@@ -120,7 +121,7 @@ class Baddies(pygame.sprite.Sprite):
         if bullet_hit:
             bullet_hit[0].parent.increment_power_count()
             # pygame.mixer.Sound.play(self.he_ded)
-            self.destroy()
+            self.explode()
 
         return bullet_hit
 
@@ -128,6 +129,10 @@ class Baddies(pygame.sprite.Sprite):
     def shoot(self):
         if randy.randrange(0, 400) == 69:
             self.enemy_fire(self.rect.midbottom, self.bullet_number)
+
+    def explode(self):
+        Explosion( (self.rect.x, self.rect.y) )
+        self.destroy()
 
     def destroy(self):
         self.kill()

@@ -176,8 +176,9 @@ class Player(pygame.sprite.Sprite):
         return self.power_count
 
     def destroy(self):
-        self.left_hand.kill()
-        self.right_hand.kill()
+        if self.hands:
+            self.left_hand.kill()
+            self.right_hand.kill()
         self.ui_text.destroy()
         self.ui_bar.destroy()
         self.kill()
