@@ -1,5 +1,5 @@
 import pygame
-from pygame.constants import K_LEFT, K_RIGHT, K_DOWN, K_UP, K_SPACE
+from pygame.constants import *
 
 from lib import resources, bullet, uitext
 
@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.res = resources.Resources.instance()
         self.game = self.res.game
         self.ui_text = uitext.UIText()  
+        self.ui_text.get_data_callback = self.get_power_count
 
         #Motion Properties
         self.friction = friction
@@ -31,24 +32,52 @@ class Player(pygame.sprite.Sprite):
 
         #State Properties
         self.ready_to_fire = True
-        self.kills = 0
+        self.power_count = 0
         self.mode_state = 0
         self.next_mode_state = 0
 
+        #Kludgey timer. Pls implement a better timer soon!
+        self.drain_tick_count = 30
+        self.drain_tick_rate = 30
+
+        
     def update(self):
+
+        #Handle kludgey timer. Pls implement a better timer soon!
+        do_drain = False
+        self.drain_tick_count = self.drain_tick_count - 1
+        if(self.drain_tick_count <= 0):
+            self.drain_tick_count = 30
+            do_drain = True
 
         self.next_mode_state = self.mode_state
 
         if self.mode_state == 0:
-            if self.kills > 2:
-                print("Leaving state 0")
+            if self.power_count > 20:
                 self.next_mode_state = 1
+                self.mech_image = pygame.transform.rotate(self.mech_image, 90)
                 self.image = self.mech_image
+
         if self.mode_state == 1:
-            if self.kills < 1:
-                print("Leaving state 1")
-                self.image = self.ship_image
+            if do_drain:
+                self.power_count = self.power_count -1
+            if self.power_count < 11:
+                self.next_mode_state = 2
+                self.mech_image = pygame.transform.rotate(self.mech_image, -90)
+                self.image = self.mech_image
+                
+        if self.mode_state == 2:
+            if self.power_count < 0:
                 self.next_mode_state = 0
+                self.image = self.ship_image
+
+            if self.power_count > 20:
+                self.next_mode_state = 1
+                self.mech_image = pygame.transform.rotate(self.mech_image, 90)
+                self.image = self.mech_image
+
+        if not self.mode_state == self.next_mode_state:
+            print(f"Mode: {self.mode_state} -> {self.next_mode_state}")
 
         self.mode_state = self.next_mode_state
 
@@ -61,6 +90,9 @@ class Player(pygame.sprite.Sprite):
                 self.player_fire()
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
+        # To test player mode state change. Remove after testing
+        if pressed_keys[K_t]:
+            self.power_count = -1
     
     def move(self):
         self.acc = vec(0,0)
@@ -104,6 +136,10 @@ class Player(pygame.sprite.Sprite):
         resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
         resources.Resources.instance().draw_groups["render"].add(new_bullet)
         resources.Resources.instance().assets['sounds']['laser1'].play()
+        self.increment_power_count()
     
-    def increment_kills(self):
-        self.kills = self.kills + 1
+    def increment_power_count(self):
+        self.power_count = self.power_count + 1
+
+    def get_power_count(self):
+        return self.power_count
