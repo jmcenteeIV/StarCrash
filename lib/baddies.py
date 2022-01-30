@@ -1,4 +1,4 @@
-from lib import resources, loader
+from lib import resources, bullet
 import pygame.math as math
 import random as randy
 import pygame
@@ -13,7 +13,7 @@ class Baddies(pygame.sprite.Sprite):
     """
 
     
-    def __init__(self, image, width, height, start_position, speed, aggression):
+    def __init__(self, image, height, width, aggression):
         super().__init__()
         """
         Initialize the alien and set its starting position
@@ -25,11 +25,13 @@ class Baddies(pygame.sprite.Sprite):
         self.aggression = aggression
         self.image = image
         self.image.convert_alpha()
-        self.rect = self.image.get_rect( center = (50,50))
+        self.rect = self.image.get_rect( center = (75,75))
         # self.pos = vec(start_position)
         # self.speed = speed
-        self.resources = resources.Resources.instance()
+        self.res = resources.Resources.instance()
 
+        # for bullet type
+        self.bullet_number = randy.randint(0, 4)
 
         # improvement stuff 
         """
@@ -48,7 +50,7 @@ class Baddies(pygame.sprite.Sprite):
         self.speed = randy.uniform(0.3, 3)
 
         # storing the position in a vector, because math is hard
-        self.pos = pygame.Vector2(self.rect.center)
+        self.pos = pygame.Vector2((randy.randint(self.rect.x,width-self.rect.x),randy.randint(self.rect.y,100)))
 
         # let's play around with some rotation to make it look cool 
         #self.rotation = randy.uniform(0.3, 1)
@@ -65,7 +67,14 @@ class Baddies(pygame.sprite.Sprite):
         """
         self.move()
         self.take_damage()        
+        self.shoot()
 
+
+    def enemy_fire(self, pos, bullet_number):
+        new_bullet = bullet.Bullet(6, pos, True, self.res.enemy_bullet_pool[bullet_number])
+        self.res.update_groups["enemy_bullet"].add(new_bullet)
+        self.res.draw_groups["render"].add(new_bullet)
+        self.res.assets['sounds']['laser1'].play()
 
 
     def move(self):
@@ -80,19 +89,20 @@ class Baddies(pygame.sprite.Sprite):
         # self.image = pygame.transform.rotate(self.rotate_img, self.angle)
 
         self.rect = self.image.get_rect(center=self.pos)
-        
-        
-        
+
+        if self.rect.x > self.width or self.rect.x < 0:
+            self.kill()
+        if self.rect.y > self.height or self.rect.y < 0:
+            self.kill()
 
         
-
     def take_damage(self):
         """
         Collision detection
         """
         
-        player_bullet = self.resources.update_groups['player_bullet']
-        player = self.resources.update_groups['player']
+        player_bullet = self.res.update_groups['player_bullet']
+        player = self.res.update_groups['player']
         
 
         """
@@ -108,6 +118,17 @@ class Baddies(pygame.sprite.Sprite):
         player_hit = pygame.sprite.spritecollide(self, player, True)
 
         return (bullet_hit, player_hit)
+
+
+    def shoot(self):
+        if randy.randrange(0, 400) == 69:
+            self.enemy_fire(self.rect.midbottom, self.bullet_number)
+
+    def switch_mode(self):
+        """
+        Switching to mech 
+        """
+        pass
 
         
         
