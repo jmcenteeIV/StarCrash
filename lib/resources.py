@@ -1,5 +1,6 @@
 import os
 import pygame
+import random
 from lib import loader
 
 from lib import player, bullet, baddies
@@ -75,13 +76,21 @@ class Resources():
         self.ui_sprite.image.set_colorkey(pygame.Color(0,255,0))
         self.ui_sprite.image.fill(pygame.Color(0,255,0))
         
-        
-
         self.enemy = baddies.Baddies(self.game.height, self.game.width, (self.game.width/2, 60), 2, 5)
+        # self.enemies = []
+        # for x in range(random.randint(4,5)):
+        baddies_choices = []
+           
+        for choice in ['eyeball', 'maw', 'thorny']:
+            baddies_choices.append(self.assets['images'][choice])
+        self.enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, (self.game.width/2, 60), 2, 5)
         self.update_groups["enemy"].add(self.enemy)
         self.draw_groups["render"].add(self.enemy)
 
-        self.player = player.Player(self.assets['images']['ejike'], self.game.height, self.game.width, .25, -.12 )
+        ship_choices = []
+        for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
+            ship_choices.append(self.assets['images'][choice])
+        self.player = player.Player(random.choices(ship_choices)[0], self.game.height, self.game.width, .25, -.12 )
         self.update_groups["player"].add(self.player)
         self.draw_groups["render"].add(self.player)
 

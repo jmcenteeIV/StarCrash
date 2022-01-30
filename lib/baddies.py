@@ -9,7 +9,7 @@ class Baddies(pygame.sprite.Sprite):
     """
 
     # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
-    def __init__(self, width, height, start_position, speed, aggression):
+    def __init__(self, image, height, width, start_position, speed, aggression):
         super().__init__()
         """
         Initialize the alien and set its starting position
@@ -26,8 +26,7 @@ class Baddies(pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.aggression = aggression
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((255,0,0))
+        self.image = image
         self.rect = self.image.get_rect( center = (50,50))
 
         # self.rect = pygame.draw.rect((screen, 0, 0, 255), (20, 20, 160,160))

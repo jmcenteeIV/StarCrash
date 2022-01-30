@@ -13,7 +13,7 @@ def load_asset(asset_path: str, asset_type: str = 'image'):
     resource_path = util.create_resource_path(asset_path)
 
     if asset_type == 'image' or asset_type == 'images':
-        return pygame.image.load(resource_path).convert()
+        return pygame.image.load(resource_path).convert_alpha()
     elif asset_type == 'sound' or asset_type == 'sounds':
         return pygame.mixer.Sound(resource_path)
     else:
