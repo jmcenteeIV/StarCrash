@@ -1,6 +1,7 @@
 import pygame
 from pygame.constants import *
 
+from lib.explosion import *
 from lib import resources, bullet, uitext, uiverticalbar
 
 vec = pygame.math.Vector2
@@ -55,7 +56,7 @@ class Player(pygame.sprite.Sprite):
             do_drain = True
 
         if self.power_count <= 0:
-            self.destroy()
+            self.explode()
 
         # Player mode state machine
         self.next_mode_state = self.mode_state
@@ -153,6 +154,10 @@ class Player(pygame.sprite.Sprite):
     def get_power_count(self):
         return self.power_count
 
+    def explode(self):
+        Explosion((self.rect.x, self.rect.y))
+        self.destroy()
+
     def destroy(self):
         self.ui_text.destroy()
         self.ui_bar.destroy()
@@ -177,8 +182,11 @@ class Player(pygame.sprite.Sprite):
         if bullet_hits and not invulnerable:
             self.power_count = self.power_count - 1
             
-        enemy_hits = pygame.sprite.spritecollide(self, enemies, True)
-        if enemy_hits and not invulnerable:
-            self.power_count = self.power_count - 1
-
+        enemy_hits = pygame.sprite.spritecollide(self, enemies, False)
+        if enemy_hits:
+            if not invulnerable:
+                self.power_count = self.power_count - 1
+            for enemy in enemy_hits:
+                enemy.explode()
+            
         return (bullet_hits, enemy_hits)
