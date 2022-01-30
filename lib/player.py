@@ -7,12 +7,13 @@ vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, ship_image, mech_image, acceleration, friction):
+    def __init__(self, ship_image, powered_mech_image, mech_image, acceleration, friction):
         super().__init__()
 
         #Sprite Properties
         self.image = ship_image
         self.ship_image = ship_image
+        self.powered_mech_image = powered_mech_image
         self.mech_image = mech_image
         self.rect = self.image.get_rect( center = (100, 420))
 
@@ -55,15 +56,13 @@ class Player(pygame.sprite.Sprite):
         if self.mode_state == 0:
             if self.power_count > 20:
                 self.next_mode_state = 1
-                self.mech_image = pygame.transform.rotate(self.mech_image, 90)
-                self.image = self.mech_image
+                self.image = self.powered_mech_image
 
         if self.mode_state == 1:
             if do_drain:
                 self.power_count = self.power_count -1
             if self.power_count < 11:
                 self.next_mode_state = 2
-                self.mech_image = pygame.transform.rotate(self.mech_image, -90)
                 self.image = self.mech_image
                 
         if self.mode_state == 2:
@@ -73,8 +72,7 @@ class Player(pygame.sprite.Sprite):
 
             if self.power_count > 20:
                 self.next_mode_state = 1
-                self.mech_image = pygame.transform.rotate(self.mech_image, 90)
-                self.image = self.mech_image
+                self.image = self.powered_mech_image
 
         if not self.mode_state == self.next_mode_state:
             print(f"Mode: {self.mode_state} -> {self.next_mode_state}")
@@ -131,11 +129,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
     def player_fire(self):
-        new_bullet = bullet.Bullet(6, self.res.player.rect.midtop)
+        new_bullet = bullet.Bullet(6, self.rect.midtop, self.res.bullet)
         new_bullet.parent = self
-        resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
-        resources.Resources.instance().draw_groups["render"].add(new_bullet)
-        resources.Resources.instance().assets['sounds']['laser1'].play()
+        self.res.update_groups["player_bullet"].add(new_bullet)
+        self.res.draw_groups["render"].add(new_bullet)
+        self.res.assets['sounds']['laser1'].play()
         self.increment_power_count()
     
     def increment_power_count(self):
