@@ -1,9 +1,8 @@
-from xml.sax.handler import DTDHandler
-from lib import resources
+from lib import resources, loader
 import pygame.math as math
 import random as randy
 import pygame
-import lib
+
 
 
 vec = pygame.math.Vector2
@@ -13,20 +12,15 @@ class Baddies(pygame.sprite.Sprite):
     Currently repersents a single enemy
     """
 
-<<<<<<< HEAD
     
-    def __init__(self, width, height, start_position, speed, aggression):
-=======
-    # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
-    def __init__(self, image, height, width, start_position, speed, aggression):
->>>>>>> bc84cf03d1972d23f033c8dc5745039323d6aa58
+    def __init__(self, image, width, height, start_position, speed, aggression):
         super().__init__()
         """
         Initialize the alien and set its starting position
         """
         
         # load enemy image when we have it
-        # self.image = loader.load_image('/path/to/file')
+        # self.image = loader.load_image('assets/images/thorny.png')
         # self.image.convert_alpha()
         # self.rect = self.enemy.image.get_rect()
 
@@ -36,6 +30,8 @@ class Baddies(pygame.sprite.Sprite):
         self.height = height
         self.aggression = aggression
         self.image = image
+        self.image.convert_alpha()
+        # self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
         # self.pos = vec(start_position)
         # self.speed = speed
@@ -55,7 +51,7 @@ class Baddies(pygame.sprite.Sprite):
 
         # constant random speed for enemy
         self.direction.normalize_ip()
-        self.speed = randy.uniform(1, 5)
+        self.speed = randy.uniform(1, 3)
 
         # storing the position in a vector, because math is hard
         self.pos = pygame.Vector2(self.rect.center)
