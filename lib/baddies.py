@@ -1,4 +1,8 @@
+from lib import resources, loader
+import pygame.math as math
+import random as randy
 import pygame
+
 
 
 vec = pygame.math.Vector2
@@ -8,47 +12,106 @@ class Baddies(pygame.sprite.Sprite):
     Currently repersents a single enemy
     """
 
-    # TODO (matthew.moroge) will probably need to the class for the screen as a param and use super()
-    def __init__(self, image, height, width, start_position, speed, aggression):
+    
+    def __init__(self, image, width, height, start_position, speed, aggression):
         super().__init__()
         """
         Initialize the alien and set its starting position
         """
         
         # load enemy image when we have it
-        # self.image = loader.load_image('/path/to/file')
+        # self.image = loader.load_image('assets/images/thorny.png')
         # self.image.convert_alpha()
         # self.rect = self.enemy.image.get_rect()
 
-        # creating basic rect for beginning, change to image later
-        # gonna need to import the screen variable for the rect
+        self.health = 10
 
         self.width = width
         self.height = height
         self.aggression = aggression
         self.image = image
+        self.image.convert_alpha()
+        # self.image.fill((255,0,0))
         self.rect = self.image.get_rect( center = (50,50))
+        # self.pos = vec(start_position)
+        # self.speed = speed
 
-        # self.rect = pygame.draw.rect((screen, 0, 0, 255), (20, 20, 160,160))
+        self.resources = resources.Resources.instance()
 
-        self.speed = speed
-        self.counter = 0
-        self.pos = vec(start_position)
+        """
+        adding movement options for random movements
+        """
+
+        # storing a copy of the image to try out rotation 
+        self.rotate_img = self.image.copy()
+        # random vector for enemy 
+        self.direction = pygame.Vector2(0, 0)
+        while self.direction.length() == 0:
+            self.direction = pygame.Vector2(randy.uniform(1, 4), randy.uniform(1, 4))
+
+        # constant random speed for enemy
+        self.direction.normalize_ip()
+        self.speed = randy.uniform(1, 3)
+
+        # storing the position in a vector, because math is hard
+        self.pos = pygame.Vector2(self.rect.center)
+
+        # let's play around with some rotation to make it look cool 
+        #self.rotation = randy.uniform(0.3, 1)
+        #self.angle = 0
+        
+        
         
 
     def update(self):
+        """
+        Refreshing enemy on screen and catching events in real time
+        """
         self.move()
+        self.take_damage()        
+
+
 
     def move(self):
         """
         moving the enemy
         """
 
-        self.pos.x += self.speed
+        self.pos += self.direction * self.speed 
+        # self.angle += self.rotation 
+        # self.image = pygame.transform.rotate(self.rotate_img, self.angle)
 
-        if self.pos.x > (self.width - (self.rect.width/2)):
-            self.pos.x, self.speed = (self.width - (self.rect.width/2)), self.speed * -1
-        if self.pos.x < (self.rect.width/2):
-            self.pos.x, self.speed = (self.rect.width/2) , self.speed * -1
+        self.rect = self.image.get_rect(center=self.pos)
+        
+        
 
-        self.rect.midbottom = self.pos
+        
+
+    def take_damage(self):
+        """
+        Collision detection
+        """
+        
+        player_bullet = self.resources.update_groups['player_bullet']
+        player = self.resources.update_groups['player']
+        
+
+        """
+        1st arg: name of sprite I want to check
+        2nd arg: name of group I want to compare against
+        3rd arg: True/False reference to dokill which either deletes the object in 1st arg or not
+        """
+        bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
+        player_hit = pygame.sprite.spritecollide(self, player, True)
+
+        return (bullet_hit, player_hit)
+
+
+    def switch_mode(self):
+        """
+        Switching to mech 
+        """
+        pass
+
+        
+        
