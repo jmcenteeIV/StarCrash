@@ -54,11 +54,7 @@ class Baddies(pygame.sprite.Sprite):
         #self.rotation = randy.uniform(0.3, 1)
         #self.angle = 0
 
-        """
-        Stuff to see if I can bounce the enemy off the screen edges 
-        """
-        self.screen = pygame.display.get_surface()
-        self.area = self.screen.get_rect()
+        
         
         
         
@@ -106,6 +102,8 @@ class Baddies(pygame.sprite.Sprite):
         """
         bullet_hit = pygame.sprite.spritecollide(self, player_bullet, True)
         if bullet_hit:
+                      
+            #self.resources.load_assets['sounds']['explosions1.wav'].play()
             self.kill()
         player_hit = pygame.sprite.spritecollide(self, player, True)
 
