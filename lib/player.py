@@ -92,8 +92,6 @@ class Player(pygame.sprite.Sprite):
         if self.drain_tick_count <= 0:
             self.drain_tick_count = 30
             do_drain = True
-            print(f"Rect: {self.rect.x} {self.rect.y}")
-            print(f"Pos: {self.pos.x} {self.pos.y}")
 
         if self.power_count <= 0:
             self.explode()
@@ -141,7 +139,7 @@ class Player(pygame.sprite.Sprite):
             if self.power_count < 5:
                 self.next_mode_state = 0
                 TransformFlash(self.pos)
-                self.image = self.ship_image
+                self.image = random.choice(self.images)
                 self.rect = self.image.get_rect()
                 self.left_hand.kill()
                 self.right_hand.kill()
