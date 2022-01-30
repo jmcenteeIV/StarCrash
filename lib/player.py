@@ -31,7 +31,7 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[K_SPACE]:
             if self.ready_to_fire:
                 self.ready_to_fire = False
-                self.player_fire()
+                resources.Resources.instance().player_fire()
 
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
@@ -73,8 +73,4 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
-    def player_fire(self):
-        new_bullet = bullet.Bullet(self.height, 6, resources.Resources.instance().player.rect.midtop)
-        resources.Resources.instance().update_groups["player_bullet"].add(new_bullet)
-        resources.Resources.instance().draw_groups["render"].add(new_bullet)
-        resources.Resources.instance().assets['sounds']['laser1'].play()
+    

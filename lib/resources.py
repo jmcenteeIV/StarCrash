@@ -24,7 +24,8 @@ class Resources():
     # Load and store assets in a centralized location. 
     # For now this is also where we spawn our initial game objects.
     def load_assets(self):
-        self.badies_range = [5, 8]
+        self.bullet_number = random.randint(0,3)
+        self.position_variance = 100
         self.assets = {
             'images': {},
             'sounds': {},
@@ -40,7 +41,9 @@ class Resources():
                 self.assets[assetType][assetName] = asset
 
     def load_objects(self, game):
+        self.badies_range = [5, 8]
         self.game = game
+        self.position_variance = 100
 
         # These groups are meant to be used only for drawing sprites
         self.draw_groups = {
@@ -62,8 +65,10 @@ class Resources():
         self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
 
-        self.load_badies(100)
+        # Enemies
+        self.load_badies()
 
+        # Player
         ship_choices = []
         for choice in ['ship_orange2', 'ship_red2', 'ship_yellow2']:
             ship_choices.append(self.assets['images'][choice])
@@ -72,17 +77,28 @@ class Resources():
         self.draw_groups["render"].add(self.player)
 
         self.player_bullet_pool = []
+        for bullet in ['_0011_bullet_green', '_0012_bullet_yellow', '_0013_bullet_pink', '_0017_bullet' ]:
+            self.player_bullet_pool.append(self.assets['images'][bullet])
+        self.bullet = self.player_bullet_pool[self.bullet_number]
+        
         
 
-    def load_badies(self, position_variance):
-        if len(self.update_groups["enemy"]) < self.badies_range[0]:
-            for x in range(random.randint(self.badies_range[0],self.badies_range[1])):
+    def load_badies(self):
+        enemies = len(self.update_groups["enemy"])
+        if  enemies < self.badies_range[0]:
+            for x in range(random.randint((self.badies_range[0] - enemies), (self.badies_range[1] - enemies))):
                 baddies_choices = []
                 for choice in ['eyeball', 'maw', 'thorny']:
                     baddies_choices.append(self.assets['images'][choice])
-                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, (self.game.width/2 + position_variance, 60), 2, 5)
+                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, (self.game.width/2 + self.position_variance, 60), 2, 5)
                 self.update_groups["enemy"].add(enemy)
                 self.draw_groups["render"].add(enemy)
-                position_variance += 75
+                self.position_variance += 75
+
+    def player_fire(self):
+        new_bullet = bullet.Bullet(self.game.height, 6, self.player.rect.midtop, self.bullet)
+        self.update_groups["player_bullet"].add(new_bullet)
+        self.draw_groups["render"].add(new_bullet)
+        self.assets['sounds']['laser1'].play()
         
         

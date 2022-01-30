@@ -86,6 +86,7 @@ class Baddies(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.pos)
         
         
+        
 
         
 
