@@ -5,7 +5,6 @@ from lib import resources, bullet, uitext
 
 vec = pygame.math.Vector2
 
-
 class Player(pygame.sprite.Sprite):
 
     def __init__(self, ship_image, mech_image, acceleration, friction):
@@ -13,6 +12,8 @@ class Player(pygame.sprite.Sprite):
 
         #Sprite Properties
         self.image = ship_image
+        self.ship_image = ship_image
+        self.mech_image = mech_image
         self.rect = self.image.get_rect( center = (100, 420))
 
         #References
@@ -31,10 +32,26 @@ class Player(pygame.sprite.Sprite):
         #State Properties
         self.ready_to_fire = True
         self.kills = 0
-
-        
+        self.mode_state = 0
+        self.next_mode_state = 0
 
     def update(self):
+
+        self.next_mode_state = self.mode_state
+
+        if self.mode_state == 0:
+            if self.kills > 2:
+                print("Leaving state 0")
+                self.next_mode_state = 1
+                self.image = self.mech_image
+        if self.mode_state == 1:
+            if self.kills < 1:
+                print("Leaving state 1")
+                self.image = self.ship_image
+                self.next_mode_state = 0
+
+        self.mode_state = self.next_mode_state
+
         self.move()
 
         pressed_keys = pygame.key.get_pressed()
