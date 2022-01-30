@@ -75,8 +75,7 @@ class Resources():
         self.ui_sprite.rect = pygame.Rect(64,64,1,1)
         self.ui_sprite.image.set_colorkey(pygame.Color(0,255,0))
         self.ui_sprite.image.fill(pygame.Color(0,255,0))
-        
-        self.enemy = baddies.Baddies(self.game.height, self.game.width, (self.game.width/2, 60), 2, 5)
+    
         # self.enemies = []
         # for x in range(random.randint(4,5)):
         baddies_choices = []
