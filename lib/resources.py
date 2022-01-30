@@ -134,8 +134,10 @@ class Resources():
         if not self.music_hype:
             self.music_list = ["Crazy Games - Wake Up","Go Gadget - Password","Big Bang Boom - Healing","You Kill My Brother - Go! Go! Go!"]
             self.track = random.choices(self.music_list)[0]
-            self.assets["sounds"][self.track].play()
         else:
             self.music_list = ["Son Of A Bit! - Chased By A Running Chupacabra"]
             self.track = random.choices(self.music_list)[0]
-            self.assets["sounds"][self.track].play()
+
+        vol = self.assets["sounds"][self.track].get_volume()
+        self.assets["sounds"][self.track].set_volume(vol*.6)
+        self.assets["sounds"][self.track].play()

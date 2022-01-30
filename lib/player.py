@@ -54,12 +54,14 @@ class Player(pygame.sprite.Sprite):
 
         #self.sound1 = pygame.mixer.Sound("/home/jammer/git/upsidedown-postman/assets/sounds/explosions4.wav")
         self.sound1 = self.res.assets['sounds']['explosions4']
+        vol = self.sound1.get_volume()
+        # self.sound1.set_volume(vol*.005)
         self.sound2 = self.res.assets['sounds']['powerup']
 
         # setting sound volume to max (range 0.0 - 1.0) becasue other sounds drowned out the transformation
         # TODO (matthew.moroge) may have to adjust other sound volumes if this is doesn't work, need feedback from the team first
-        self.sound1.set_volume(1)
-        self.sound2.set_volume(1)
+        # self.sound1.set_volume(1)
+        # self.sound2.set_volume(1)
 
         self.hands = False
 
