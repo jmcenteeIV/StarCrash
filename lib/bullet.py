@@ -6,11 +6,12 @@ vec = pygame.math.Vector2
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, height, velocity, pos):
+    def __init__(self, height, velocity, pos, image):
         super().__init__()
         self.height = height
         self.image = pygame.Surface((30, 30))
         self.image.fill((128,255,40))
+        self.image = image
         self.rect = self.image.get_rect(center=pos)
         # self.image = loader.load_image('assets/images/ejike.png')
         # self.rect = self.image.get_rect(center = (100, 420))

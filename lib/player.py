@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[K_SPACE]:
             if self.ready_to_fire:
                 self.ready_to_fire = False
-                self.player_fire()
+                resources.Resources.instance().player_fire()
 
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True

@@ -49,6 +49,7 @@ class Game(object):
         update_groups = resources.Resources.instance().update_groups
         for group in update_groups:
             update_groups[group].update()
+        resources.Resources.instance().load_badies()
 
 
     def process_events(self):
