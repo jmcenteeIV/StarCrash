@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.ship_image = ship_image
         self.powered_mech_image = powered_mech_image
         self.mech_image = mech_image
-        self.rect = self.image.get_rect( center = (106, 100))
+        self.rect = self.image.get_rect( center = (53, 100))
 
         #References
         self.res = resources.Resources.instance()
@@ -36,15 +36,19 @@ class Player(pygame.sprite.Sprite):
 
         #State Properties
         self.ready_to_fire = True
-        self.power_count = 1
+        self.power_count = 5
         self.mode_state = 0
         self.next_mode_state = 0
 
         #Kludgey timer. Pls implement a better timer soon!
         self.drain_tick_count = 30
         self.drain_tick_rate = 30
-        
+
         self.hands = False
+
+        self.update_hand_positions()
+        
+        
         
     def update(self):
 
@@ -69,9 +73,9 @@ class Player(pygame.sprite.Sprite):
                 if not self.hands:
                     for left_side in [True, False]:
                         if left_side:
-                            self.left_hand = hands.Hands( .95, self.rect.topleft, left_side, self.res.assets["images"]["power_L_hand"])
+                            self.left_hand = hands.Hands( .95, self.position_for_left, left_side, self.res.assets["images"]["power_L_hand"], self.acceleration*.5, self.friction*.25)
                         else:
-                            self.right_hand = hands.Hands( .95, self.rect.topright, left_side, self.res.assets["images"]["power_R_hand"])
+                            self.right_hand = hands.Hands( .95, self.position_for_right, left_side, self.res.assets["images"]["power_R_hand"], self.acceleration, self.friction*.25)
                     for hand in [self.left_hand, self.right_hand]:
                         self.res.update_groups["player"].add(hand)
                         self.res.draw_groups["render"].add(hand)
@@ -125,6 +129,7 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.acc = vec(0,0)
 
+        self.update_hand_positions()
         pressed_keys = pygame.key.get_pressed()
         #  Horizontal movement        
         if pressed_keys[K_LEFT]:
@@ -159,8 +164,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
         if self.hands:
-            self.left_hand.move(self.rect.topleft)
-            self.right_hand.move(self.rect.topright)
+            self.left_hand.player_pos = self.position_for_left
+            self.right_hand.player_pos = self.position_for_right
 
     def player_fire(self):
         new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
@@ -168,6 +173,9 @@ class Player(pygame.sprite.Sprite):
         self.res.update_groups["player_bullet"].add(new_bullet)
         self.res.draw_groups["render"].add(new_bullet)
         self.res.assets['sounds']['laser1'].play()
+        if self.hands:
+            self.left_hand.sweeping_attack()
+            self.right_hand.sweeping_attack()
     
     def increment_power_count(self):
         self.power_count = self.power_count + 1
@@ -207,3 +215,11 @@ class Player(pygame.sprite.Sprite):
             self.power_count = self.power_count - 1
 
         return (bullet_hits, enemy_hits)
+
+    def update_hand_positions(self):
+        if self.hands:
+            self.position_for_left = (vec(self.rect.midleft).x -50, vec(self.rect.midleft).y) 
+            self.position_for_right =  (vec(self.rect.midright).x + 140, vec(self.rect.midright).y)
+        else:
+            self.position_for_left = self.rect.midright
+            self.position_for_right =  self.rect.midright
