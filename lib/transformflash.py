@@ -16,11 +16,11 @@ class TransformFlash(AnimatedEffect):
         mode = 1            # PingPong playback: goes to end and reverses
 
         for i in range(0,self.animation_frame_count):
-            self.images.append(self.res.assets['images'][f"{animation_name}{i}"])
+            self.images.append(self.res.assets[f"{animation_name}{i}"].load_resource())
         super().__init__(pos, self.images, animation_rate, lifetime, mode)
         
-        self.sound = self.res.assets['sounds']['powerup']
-        #self.sound.play()
+        # self.sound = self.res.assets['powerup'].load_resource()
+        # self.sound.play()
 
         #self.finished_callback = lambda *_, **__: None # Callback function to let Player know transformation is finished
 

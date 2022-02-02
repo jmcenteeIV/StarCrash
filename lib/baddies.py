@@ -77,7 +77,7 @@ class Baddies(pygame.sprite.Sprite):
         new_bullet = bullet.Bullet(6, pos, True, self.res.enemy_bullet_pool[bullet_number])
         self.res.update_groups["enemy_bullet"].add(new_bullet)
         self.res.draw_groups["render"].add(new_bullet)
-        self.res.assets['sounds']['laser1'].play()
+        self.res.assets['laser1'].load_resource().play()
 
 
     def move(self):

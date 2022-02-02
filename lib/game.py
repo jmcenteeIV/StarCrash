@@ -34,7 +34,7 @@ class Game(object):
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
 
-        resources.Resources.instance().load_assets()
+        resources.Resources.instance().fetch_assets()
         resources.Resources.instance().load_objects(self)
 
     # High-level game loop
