@@ -40,6 +40,10 @@ class Player(pygame.sprite.Sprite):
         self.ui_gameover_label.rect = pygame.Rect((self.game.width/2)-128,self.game.height/2,1,1)
         self.ui_gameover_label.get_data_callback = self.get_gameover_string
 
+        self.ui_gameover_label = uitext.UIText()
+        self.ui_gameover_label.rect = pygame.Rect((self.game.width/2)-128,self.game.height/2,1,1)
+        self.ui_gameover_label.get_data_callback = self.get_win_string
+
 
         #Motion Properties
         self.friction = friction
@@ -53,6 +57,7 @@ class Player(pygame.sprite.Sprite):
 
         #State Properties
         self.game_over = False
+        self.win = False
         self.num_lives = 3
         self.ready_to_fire = True
         self.power_count = 3
@@ -107,6 +112,7 @@ class Player(pygame.sprite.Sprite):
                 self.next_mode_state = 1
                 TransformFlash(self.pos)
                 self.res.music_hype = True
+                self.res.mech_mode = True
                 self.res.song_change()
                 self.image = self.powered_mech_image
                 # super duct tape for playing two sounds together in pygame
@@ -157,6 +163,13 @@ class Player(pygame.sprite.Sprite):
 
         if not self.mode_state == self.next_mode_state:
             print(f"Mode: {self.mode_state} -> {self.next_mode_state}")
+        
+        if self.power_count > 30:
+            self.win = True
+            self.res.game_over = True
+            self.res.mech_mode = False
+            for baddie in self.res.update_groups["enemy"]:
+                baddie.kill()
 
         self.mode_state = self.next_mode_state
 
@@ -290,6 +303,12 @@ class Player(pygame.sprite.Sprite):
     def get_gameover_string(self):
         if self.game_over:
             return "Game Over"
+        else:
+            return ""
+
+    def get_win_string(self):
+        if self.win:
+            return "You Win!"
         else:
             return ""
 

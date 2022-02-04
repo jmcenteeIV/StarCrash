@@ -7,7 +7,7 @@ def load_image(image_path: str):
     image = util.create_resource_path(image_path)
     return pygame.image.load(image).convert()
 
-def load_asset(asset_path: str, asset_type: str = 'image'):
+def load_asset(asset_path: str, asset_type: str = 'image', volume=None):
 
     if asset_type == 'image' or asset_type == 'images':
         return pygame.image.load(asset_path).convert_alpha()

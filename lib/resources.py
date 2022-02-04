@@ -1,3 +1,4 @@
+from datetime import datetime
 import os, sys
 import pygame
 import random
@@ -28,6 +29,9 @@ class Resources():
         self.position_variance = 100
         self.track = ""
         self.music_hype = False
+        self.mech_mode = False
+        self.game_over = False
+        self.last_enemy_increment = datetime.now()
         self.assets = {
             'images': {},
             'sounds': {},
@@ -56,6 +60,19 @@ class Resources():
         for sound in self.assets["sounds"]:
             vol = self.assets["sounds"][sound].get_volume()
             self.assets["sounds"][sound].set_volume(vol*.05)
+        
+        sounds = [
+            self.assets['sounds']['explosions1'],
+            self.assets['sounds']['explosions2'],
+            self.assets['sounds']['explosions3'],
+            self.assets['sounds']['explosions4'],
+        ]
+        for sound in sounds:
+            vol = sound.get_volume()
+            sound.set_volume(vol*1.2)
+        vol = sounds[3].get_volume()
+        sound.set_volume(vol*.6)
+
 
     def load_objects(self, game):
         self.badies_range = [5, 8]
@@ -109,16 +126,23 @@ class Resources():
         
 
     def load_badies(self):
-        enemies = len(self.update_groups["enemy"])
-        if  enemies < self.badies_range[0]:
-            for x in range(random.randint((self.badies_range[0] - enemies), (self.badies_range[1] - enemies))):
-                baddies_choices = []
-                for choice in ['eyeball', 'maw', 'thorny']:
-                    baddies_choices.append(self.assets['images'][choice])
-                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, 5)
-                self.update_groups["enemy"].add(enemy)
-                self.draw_groups["render"].add(enemy)
-                self.position_variance += 75
+        if not self.game_over:
+            enemies = len(self.update_groups["enemy"])
+            if  enemies < self.badies_range[0]:
+                for x in range(random.randint((self.badies_range[0] - enemies), (self.badies_range[1] - enemies))):
+                    baddies_choices = []
+                    for choice in ['eyeball', 'maw', 'thorny']:
+                        baddies_choices.append(self.assets['images'][choice])
+                    enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, 5)
+                    self.update_groups["enemy"].add(enemy)
+                    self.draw_groups["render"].add(enemy)
+                    self.position_variance += 75
+            if self.mech_mode and ((datetime.now() - self.last_enemy_increment).total_seconds() > 5):
+                self.last_enemy_increment = datetime.now()
+                temp_list = []
+                for x in self.badies_range:
+                    temp_list.append(x+1)
+                self.badies_range = temp_list
 
 
     def load_player(self):
