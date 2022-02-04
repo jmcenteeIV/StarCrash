@@ -6,9 +6,9 @@ authors = ["Jansen McEntee <jmcenteeiv@gmail.com>"]
 license = "GNU"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.11"
 pygame = "*"
-pyinstaller = "*"
+pyinstaller = ">=4.7"
 
 [tool.poetry.dev-dependencies]
 
