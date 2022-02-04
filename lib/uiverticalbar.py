@@ -15,6 +15,9 @@ class UIVerticalBar(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.x,self.y,self.width,self.height)
         self.image = pygame.Surface( (self.width, self.height) )
         self.image.set_alpha(128)
+
+        self.min_color = pygame.Color('red4')
+        self.max_color = pygame.Color('green')
         
         self.max_value = 30
         self.min_value = 0
@@ -37,6 +40,7 @@ class UIVerticalBar(pygame.sprite.Sprite):
             foreground_ratio = 0
         else:
             foreground_ratio = self.value / (self.max_value - self.min_value)
+        self.foreground_color = self.min_color.lerp(self.max_color, foreground_ratio)
         foreground_height = int(foreground_ratio * self.height) 
         foreground_top = self.height - foreground_height
         return pygame.Rect(0, foreground_top, self.rect.width, foreground_height)
