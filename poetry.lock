@@ -46,11 +46,11 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "pyinstaller"
-version = "4.5.1"
+version = "4.8"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = "<3.11,>=3.6"
 
 [package.dependencies]
 altgraph = "*"
@@ -81,8 +81,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.10"
-content-hash = "ba97aa4311a302e129ea4933626e85af3cc178e8dce2aae97b5365f750632719"
+python-versions = ">=3.10,<3.11"
+content-hash = "68e3e987a2a43699bc6bd86bfc39922f2953bfa95d93d9c843bf4f17ed1f717d"
 
 [metadata.files]
 altgraph = [
@@ -160,13 +160,17 @@ pygame = [
     {file = "pygame-2.1.2.tar.gz", hash = "sha256:d6d0eca28f886f0477cd0721ac688189155a587f2bb8eae740e52ca56c3ad23c"},
 ]
 pyinstaller = [
-    {file = "pyinstaller-4.5.1-py3-none-macosx_10_13_universal2.whl", hash = "sha256:ecc2baadeeefd2b6fbf39d13c65d4aa603afdda1c6aaaebc4577ba72893fee9e"},
-    {file = "pyinstaller-4.5.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:4d848cd782ee0893d7ad9fe2bfe535206a79f0b6760cecc5f2add831258b9322"},
-    {file = "pyinstaller-4.5.1-py3-none-manylinux2014_i686.whl", hash = "sha256:8f747b190e6ad30e2d2fd5da9a64636f61aac8c038c0b7f685efa92c782ea14f"},
-    {file = "pyinstaller-4.5.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c587da8f521a7ce1b9efb4e3d0117cd63c92dc6cedff24590aeef89372f53012"},
-    {file = "pyinstaller-4.5.1-py3-none-win32.whl", hash = "sha256:fed9f5e4802769a416a8f2ca171c6be961d1861cc05a0b71d20dfe05423137e9"},
-    {file = "pyinstaller-4.5.1-py3-none-win_amd64.whl", hash = "sha256:aae456205c68355f9597411090576bb31b614e53976b4c102d072bbe5db8392a"},
-    {file = "pyinstaller-4.5.1.tar.gz", hash = "sha256:30733baaf8971902286a0ddf77e5499ac5f7bf8e7c39163e83d4f8c696ef265e"},
+    {file = "pyinstaller-4.8-py3-none-macosx_10_13_universal2.whl", hash = "sha256:b0b3a31aa60292469f9595f298e2c147cba29c30edcd92a38fdce27727809625"},
+    {file = "pyinstaller-4.8-py3-none-manylinux2014_aarch64.whl", hash = "sha256:9fbb05f5f67862005234da8c7eac69ef87e086f90e345749260051b031774c52"},
+    {file = "pyinstaller-4.8-py3-none-manylinux2014_i686.whl", hash = "sha256:15d9266d78dc757c103962826e62bce1513825078160be580534ead2ef53087c"},
+    {file = "pyinstaller-4.8-py3-none-manylinux2014_ppc64le.whl", hash = "sha256:5c2fd5f18c0397f3d9160446035556afc7f6446fd88048887fdf46eadf85c5ec"},
+    {file = "pyinstaller-4.8-py3-none-manylinux2014_s390x.whl", hash = "sha256:6f5cdc39fbdec7b2e0c46cc0f5bd0071bb85e592e324bf4e15375c5ff19e55fc"},
+    {file = "pyinstaller-4.8-py3-none-manylinux2014_x86_64.whl", hash = "sha256:4c848720a65a5bd41249bc804d1bd3dd089bb56aef7f1c5e11f774f11e649443"},
+    {file = "pyinstaller-4.8-py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:44783d58ac4cb0a74a4f2180da4dacbe6a7a013a62b3aa10be6082252e296954"},
+    {file = "pyinstaller-4.8-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:b720853a00bd9547b7d6403d85f23b7f7e451e41bc907673d9fc7f8d9d274594"},
+    {file = "pyinstaller-4.8-py3-none-win32.whl", hash = "sha256:53ed05214dd67624756fe4e82e861857921a79d0392debf8c9f5bb0ba5a479b6"},
+    {file = "pyinstaller-4.8-py3-none-win_amd64.whl", hash = "sha256:f00e1296abac71f3b5bb9fdc2e0d4c079201d62faeeeb894ccadd0616179fee3"},
+    {file = "pyinstaller-4.8.tar.gz", hash = "sha256:7ae868bbcc502832a2c802c84a1dbb9f48b44445c50144c29bfcd7b760140e13"},
 ]
 pyinstaller-hooks-contrib = [
     {file = "pyinstaller-hooks-contrib-2022.0.tar.gz", hash = "sha256:61b667f51b2525377fae30793f38fd9752a08032c72b209effabf707c840cc38"},

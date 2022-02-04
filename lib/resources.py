@@ -1,8 +1,8 @@
-import os
+import os, sys
 import pygame
 import random
 from lib import loader
-
+import lib.utility as util
 from lib import player, bullet, baddies
 
 class Resources():
@@ -34,15 +34,18 @@ class Resources():
             'fonts': {},
         }
 
-        for root, dirs, files in os.walk('assets'):
-            for file in files:                          # e.g. assets/images/paperboy.jpg                            
-                assetType = os.path.split(root)[1]      #      assets/images    ->  images
-                assetName = os.path.splitext(file)[0]   #      paperboy.jpg     ->  paperboy
-                assetPath = os.path.join(root, file)    #      assets/image, paperboy.jpg -> assets/images/paperboy.jpg
-                print(f"Loading {assetType} {file} as {assetName}")
-                asset = loader.load_asset(assetPath, assetType)
-                self.assets[assetType][assetName] = asset
+        resource_path = util.create_resource_path('assets')
 
+        for root, dirs, files in os.walk(resource_path):
+            for file in files:                          # e.g. assets/images/paperboy.jpg                            
+                asset_type = os.path.split(root)[1]      #      assets/images    ->  images
+                asset_name = os.path.splitext(file)[0]   #      paperboy.jpg     ->  paperboy
+                asset_path = os.path.join(root, file)    #      assets/image, paperboy.jpg -> assets/images/paperboy.jpg
+                print(f"Loading {asset_type} {file} as {asset_name}")
+                asset = loader.load_asset(asset_path, asset_type)
+                self.assets[asset_type][asset_name] = asset
+
+        print('done loading assets')
         # Manually load font
 
         self.assets['fonts']['default'] = pygame.freetype.Font(None)
