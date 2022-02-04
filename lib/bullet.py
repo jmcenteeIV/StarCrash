@@ -27,9 +27,9 @@ class Bullet(pygame.sprite.Sprite):
         # couldn't use assets because it won't allow mixer.Sound method call 
         #self.enemy_shots = [pygame.mixer.Sound(f"/home/jammer/git/upsidedown-postman/assets/sounds/shots{x}.wav") for x in range(1,3)]
         if(enemy_bullet):
-            self.enemy_shots = [self.res.assets[f"shots{x}"] for x in range(1,3)]
+            self.enemy_shots = [self.res.assets['sounds'][f"shots{x}"] for x in range(1,3)]
             self.rand_shots = random.choice(self.enemy_shots)
-            self.rand_shots.load_resource().play()
+            self.rand_shots.play()
         
     def update(self):
         self.move()
