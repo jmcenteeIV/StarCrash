@@ -20,12 +20,12 @@ class Player(pygame.sprite.Sprite):
 
         #Sprite Properties
         self.images = [
-            self.res.assets['ship_red2'].load_resource(),
-            self.res.assets['ship_yellow2'].load_resource(),
-            self.res.assets['ship_orange2'].load_resource(),
+            self.res.assets['images']['ship_red2'],
+            self.res.assets['images']['ship_yellow2'],
+            self.res.assets['images']['ship_orange2'],
         ]
-        self.powered_mech_image = self.res.assets['power_mech'].load_resource()
-        self.mech_image = self.res.assets['_0000_mech'].load_resource()
+        self.powered_mech_image = self.res.assets['images']['power_mech']
+        self.mech_image = self.res.assets['images']['_0000_mech']
         self.image = random.choice(self.images)
         self.rect = self.image.get_rect()
 
@@ -40,6 +40,10 @@ class Player(pygame.sprite.Sprite):
         self.ui_gameover_label.rect = pygame.Rect((self.game.width/2)-128,self.game.height/2,1,1)
         self.ui_gameover_label.get_data_callback = self.get_gameover_string
 
+        self.ui_gameover_label = uitext.UIText()
+        self.ui_gameover_label.rect = pygame.Rect((self.game.width/2)-128,self.game.height/2,1,1)
+        self.ui_gameover_label.get_data_callback = self.get_win_string
+
 
         #Motion Properties
         self.friction = friction
@@ -53,6 +57,7 @@ class Player(pygame.sprite.Sprite):
 
         #State Properties
         self.game_over = False
+        self.win = False
         self.num_lives = 3
         self.ready_to_fire = True
         self.power_count = 3
@@ -67,10 +72,10 @@ class Player(pygame.sprite.Sprite):
          # Sound power up properties
 
         #self.sound1 = pygame.mixer.Sound("/home/jammer/git/upsidedown-postman/assets/sounds/explosions4.wav")
-        self.sound1 = self.res.assets['explosions4'].load_resource()
+        self.sound1 = self.res.assets['sounds']['explosions4']
         vol = self.sound1.get_volume()
         # self.sound1.set_volume(vol*.005)
-        self.sound2 = self.res.assets['powerup'].load_resource()
+        self.sound2 = self.res.assets['sounds']['powerup']
 
         # setting sound volume to max (range 0.0 - 1.0) becasue other sounds drowned out the transformation
         # TODO (matthew.moroge) may have to adjust other sound volumes if this is doesn't work, need feedback from the team first
@@ -107,6 +112,7 @@ class Player(pygame.sprite.Sprite):
                 self.next_mode_state = 1
                 TransformFlash(self.pos)
                 self.res.music_hype = True
+                self.res.mech_mode = True
                 self.res.song_change()
                 self.image = self.powered_mech_image
                 # super duct tape for playing two sounds together in pygame
@@ -117,9 +123,9 @@ class Player(pygame.sprite.Sprite):
                 if not self.hands:
                     for left_side in [True, False]:
                         if left_side:
-                            self.left_hand = hands.Hands( .95, self.position_for_left, left_side, self.res.assets["power_L_hand"].load_resource(), self.acceleration*.5, self.friction*.25)
+                            self.left_hand = hands.Hands( .95, self.position_for_left, left_side, self.res.assets["images"]["power_L_hand"], self.acceleration*.5, self.friction*.25)
                         else:
-                            self.right_hand = hands.Hands( .95, self.position_for_right, left_side, self.res.assets["power_R_hand"].load_resource(), self.acceleration, self.friction*.25)
+                            self.right_hand = hands.Hands( .95, self.position_for_right, left_side, self.res.assets["images"]["power_R_hand"], self.acceleration, self.friction*.25)
                     for hand in [self.left_hand, self.right_hand]:
                         self.res.update_groups["player"].add(hand)
                         self.res.draw_groups["render"].add(hand)
@@ -133,8 +139,8 @@ class Player(pygame.sprite.Sprite):
             if self.power_count < 11:
                 self.next_mode_state = 2
                 self.image = self.mech_image
-                self.right_hand.image = self.res.assets["R_hand"].load_resource()
-                self.left_hand.image = self.res.assets["L_hand"].load_resource()
+                self.right_hand.image = self.res.assets["images"]["R_hand"]
+                self.left_hand.image = self.res.assets["images"]["L_hand"]
                 
         if self.mode_state == 2:
             self.take_damage(False)
@@ -152,11 +158,18 @@ class Player(pygame.sprite.Sprite):
             if self.power_count > 20:
                 self.next_mode_state = 1
                 self.image = self.powered_mech_image
-                self.right_hand.image = self.res.assets["power_R_hand"].load_resource()
-                self.left_hand.image = self.res.assets["power_L_hand"].load_resource()
+                self.right_hand.image = self.res.assets["images"]["power_R_hand"]
+                self.left_hand.image = self.res.assets["images"]["power_L_hand"]
 
         if not self.mode_state == self.next_mode_state:
             print(f"Mode: {self.mode_state} -> {self.next_mode_state}")
+        
+        if self.power_count > 30:
+            self.win = True
+            self.res.game_over = True
+            self.res.mech_mode = False
+            for baddie in self.res.update_groups["enemy"]:
+                baddie.kill()
 
         self.mode_state = self.next_mode_state
 
@@ -223,14 +236,14 @@ class Player(pygame.sprite.Sprite):
             new_bullet.parent = self
             self.res.update_groups["player_bullet"].add(new_bullet)
             self.res.draw_groups["render"].add(new_bullet)
-            self.res.assets['laser1'].load_resource().play()
+            self.res.assets['sounds']['laser1'].play()
         if self.mode_state == 1:
             new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
-            new_bullet.image = self.res.assets['_0020_nuke'].load_resource()
+            new_bullet.image = self.res.assets['images']['_0020_nuke']
             new_bullet.parent = self
             self.res.update_groups["player_bullet"].add(new_bullet)
             self.res.draw_groups["render"].add(new_bullet)
-            self.res.assets['shots3'].load_resource().play()
+            self.res.assets['sounds']['shots3'].play()
     
     def increment_power_count(self):
         self.power_count = self.power_count + 1
@@ -290,6 +303,12 @@ class Player(pygame.sprite.Sprite):
     def get_gameover_string(self):
         if self.game_over:
             return "Game Over"
+        else:
+            return ""
+
+    def get_win_string(self):
+        if self.win:
+            return "You Win!"
         else:
             return ""
 

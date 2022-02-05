@@ -1,9 +1,10 @@
-import os
+from datetime import datetime
+import os, sys
 import pygame
 import random
-
+from lib import loader
+import lib.utility as util
 from lib import player, bullet, baddies
-from lib import assets
 
 class Resources():
     
@@ -23,30 +24,54 @@ class Resources():
 
     # Load and store assets in a centralized location. 
     # For now this is also where we spawn our initial game objects.
-    def fetch_assets(self):
+    def load_assets(self):
         self.bullet_number = random.randint(0,3)
         self.position_variance = 100
         self.track = ""
         self.music_hype = False
+        self.mech_mode = False
+        self.game_over = False
+        self.last_enemy_increment = datetime.now()
         self.assets = {
             'images': {},
             'sounds': {},
             'fonts': {},
         }
 
-        for root, dirs, files in os.walk('assets'):
+        resource_path = util.create_resource_path('assets')
+
+        for root, dirs, files in os.walk(resource_path):
             for file in files:                          # e.g. assets/images/paperboy.jpg                            
                 asset_type = os.path.split(root)[1]      #      assets/images    ->  images
                 asset_name = os.path.splitext(file)[0]   #      paperboy.jpg     ->  paperboy
                 asset_path = os.path.join(root, file)    #      assets/image, paperboy.jpg -> assets/images/paperboy.jpg
                 print(f"Loading {asset_type} {file} as {asset_name}")
-                self.assets[asset_name] = assets.Assets(asset_path, asset_type)
+                asset = loader.load_asset(asset_path, asset_type)
+                self.assets[asset_type][asset_name] = asset
 
+        print('done loading assets')
         # Manually load font
 
         self.assets['fonts']['default'] = pygame.freetype.Font(None)
         self.assets['fonts']['default'].size = 64
         self.assets['fonts']['default'].antialiased = False
+
+        # Change volume
+        for sound in self.assets["sounds"]:
+            vol = self.assets["sounds"][sound].get_volume()
+            self.assets["sounds"][sound].set_volume(vol*.05)
+        
+        sounds = [
+            self.assets['sounds']['explosions1'],
+            self.assets['sounds']['explosions2'],
+            self.assets['sounds']['explosions3'],
+            self.assets['sounds']['explosions4'],
+        ]
+        for sound in sounds:
+            vol = sound.get_volume()
+            sound.set_volume(vol*1.2)
+        vol = sounds[3].get_volume()
+        sound.set_volume(vol*.6)
 
 
     def load_objects(self, game):
@@ -73,7 +98,7 @@ class Resources():
 
         # The background is now another sprite. This code is a bit cumbersome, but this allows the bg to be altered
         self.background_sprite = pygame.sprite.Sprite(self.draw_groups['background'])
-        self.background_sprite.image = self.assets['notspaceart'].load_resource()
+        self.background_sprite.image = self.assets['images']['notspaceart']
         self.background_sprite.rect = pygame.Rect(0,0,1,1)
 
         # Sprite for UI
@@ -89,25 +114,35 @@ class Resources():
 
         self.player_bullet_pool = []
         for bullet in ['_0011_bullet_green', '_0012_bullet_yellow', '_0013_bullet_pink', '_0017_bullet' ]:
-            self.player_bullet_pool.append(self.assets[bullet].load_resource())
+            self.player_bullet_pool.append(self.assets['images'][bullet])
         self.player_bullet = self.player_bullet_pool[self.bullet_number]
 
         self.enemy_bullet_pool = []
         for bullet in ['_0008_droplet', 'spikeball', '_0007_missile', '_0005_thorn1', '_0006_thorn2' ]:
-            self.enemy_bullet_pool.append(self.assets[bullet].load_resource())
+            self.enemy_bullet_pool.append(self.assets['images'][bullet])
+
+        
+        
         
 
     def load_badies(self):
-        enemies = len(self.update_groups["enemy"])
-        if  enemies < self.badies_range[0]:
-            for x in range(random.randint((self.badies_range[0] - enemies), (self.badies_range[1] - enemies))):
-                baddies_choices = []
-                for choice in ['eyeball', 'maw', 'thorny']:
-                    baddies_choices.append(self.assets[choice].load_resource())
-                enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, 5)
-                self.update_groups["enemy"].add(enemy)
-                self.draw_groups["render"].add(enemy)
-                self.position_variance += 75
+        if not self.game_over:
+            enemies = len(self.update_groups["enemy"])
+            if  enemies < self.badies_range[0]:
+                for x in range(random.randint((self.badies_range[0] - enemies), (self.badies_range[1] - enemies))):
+                    baddies_choices = []
+                    for choice in ['eyeball', 'maw', 'thorny']:
+                        baddies_choices.append(self.assets['images'][choice])
+                    enemy = baddies.Baddies(random.choices(baddies_choices)[0], self.game.height, self.game.width, 5)
+                    self.update_groups["enemy"].add(enemy)
+                    self.draw_groups["render"].add(enemy)
+                    self.position_variance += 75
+            if self.mech_mode and ((datetime.now() - self.last_enemy_increment).total_seconds() > 5):
+                self.last_enemy_increment = datetime.now()
+                temp_list = []
+                for x in self.badies_range:
+                    temp_list.append(x+1)
+                self.badies_range = temp_list
 
 
     def load_player(self):
@@ -115,12 +150,14 @@ class Resources():
 
     def song_change(self):
         if self.track:
-                self.assets[self.track].load_resource().stop()
+                self.assets["sounds"][self.track].stop()
         if not self.music_hype:
             self.music_list = ["Crazy Games - Wake Up","Go Gadget - Password","Big Bang Boom - Healing","You Kill My Brother - Go! Go! Go!"]
             self.track = random.choices(self.music_list)[0]
         else:
             self.music_list = ["Son Of A Bit! - Chased By A Running Chupacabra"]
             self.track = random.choices(self.music_list)[0]
-        song = self.assets["shots1"].load_resource(.2)
-        song.play()
+
+        vol = self.assets["sounds"][self.track].get_volume()
+        self.assets["sounds"][self.track].set_volume(vol*.5)
+        self.assets["sounds"][self.track].play()
