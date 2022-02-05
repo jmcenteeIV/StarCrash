@@ -238,8 +238,8 @@ class Player(pygame.sprite.Sprite):
             self.res.draw_groups["render"].add(new_bullet)
             self.res.assets['sounds']['laser1'].play()
         if self.mode_state == 1:
-            new_bullet = bullet.Bullet(6, self.rect.midtop, False, self.res.player_bullet)
-            new_bullet.image = self.res.assets['images']['_0020_nuke']
+            image = self.res.assets['images']['_0020_nuke']
+            new_bullet = bullet.Bullet(6, self.rect.midtop, False, image)
             new_bullet.parent = self
             self.res.update_groups["player_bullet"].add(new_bullet)
             self.res.draw_groups["render"].add(new_bullet)

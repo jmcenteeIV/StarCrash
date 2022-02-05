@@ -21,10 +21,5 @@ class Explosion(AnimatedEffect):
             self.res.assets['sounds']['explosions3'],
             self.res.assets['sounds']['explosions4'],
         ]
-        for sound in self.sounds:
-            vol = sound.get_volume()
-            sound.set_volume(vol*1.5)
-        vol = self.sounds[3].get_volume()
-        sound.set_volume(vol*.8)
 
         self.sounds[random.randint(0,len(self.sounds)-1)].play()
