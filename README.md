@@ -33,7 +33,7 @@ background_image = loader.load_image("assets/images/paperboy.jpg")
 ## Building into an exe
 Execute the following commands from the `[project_root]`
 ```
-pyinstaller --onefile .\__init__.py --paths '.\' --exclude-module _bootlocale --add-data 'assets/;assets/' --name 'StarCrash'
+pyinstaller --onefile .\__init__.py --paths '.\' --exclude-module _bootlocale --add-data 'assets/;assets/' --name 'StarCrash' --icon './assets/images/hand.ico'
 ```
 This will generate the executable. 
 If you want to further edit the build without running the whole command, you can edit the spec file that is created and run it like so:

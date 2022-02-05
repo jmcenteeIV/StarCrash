@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = acceleration
         
         self.spawn_pos = vec((self.game.width/2, self.game.height))
-        self.pos = self.spawn_pos
+        self.pos = vec(self.spawn_pos.x, self.spawn_pos.y)
         self.rect.center = self.pos
         self.vel = vec(0,0)
         self.acc = vec(0,0)
@@ -175,8 +175,6 @@ class Player(pygame.sprite.Sprite):
 
         #End state machine
 
-        self.move()
-
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_SPACE]:
             if self.ready_to_fire:
@@ -184,6 +182,8 @@ class Player(pygame.sprite.Sprite):
                 self.player_fire()
         if not pressed_keys[K_SPACE]:
             self.ready_to_fire = True
+
+        self.move()
             
     
     def move(self):
@@ -321,11 +321,11 @@ class Player(pygame.sprite.Sprite):
             self.ui_bar.destroy()
             self.ui_lives_count.destroy()
         else:
-            self.num_lives -= 1
             self.image = random.choice(self.images)
             self.rect = self.image.get_rect()
             self.mode_state = 0
             self.next_mode_state = 0
-            self.power_count = 0
+            self.power_count = 3
             self.ready_to_fire = True
-            self.pos = self.spawn_pos
+            self.pos.x = self.spawn_pos.x
+            self.pos.y = self.spawn_pos.y
