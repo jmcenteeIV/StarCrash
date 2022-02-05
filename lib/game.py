@@ -34,8 +34,12 @@ class Game(object):
         self.width, self.height = 1360, 720
         self.screen = pygame.display.set_mode((self.width, self.height))
 
-        resources.Resources.instance().load_assets()
-        resources.Resources.instance().load_objects(self)
+        self.res = resources.Resources.instance()
+        self.res.load_assets()
+        self.res.load_objects(self)
+
+        pygame.display.set_icon(self.res.assets['images']['hand'])
+        pygame.display.set_caption("StarCrash")
 
     # High-level game loop
     def loop(self):
